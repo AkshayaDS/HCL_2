@@ -43,5 +43,20 @@
     "expected_delivery_days": 2,
     "status": "CREATED",
     "created_at": "2026-04-18T11:28:36"
+  },
+  {
+    "po_id": "PO-8C0C95",
+    "pr_id": "PR-45B822",
+    "case_id": "CASE-1019",
+    "component": "engine nacelle",
+    "quantity": 1,
+    "unit_price": 1000.0,
+    "total_cost": 1150.0,
+    "currency": "USD",
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "expected_delivery_days": 2,
+    "status": "CREATED",
+    "created_at": "2026-04-18T13:22:27"
   }
 ]

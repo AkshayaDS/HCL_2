@@ -2430,8 +2430,8 @@
     "operator_username": "akshayashanmugam22@gmail.com",
     "operator_name": "kashs",
     "operator_label": "kashs (akshayashanmugam22@gmail.com)",
-    "status": "PR_PENDING_APPROVAL",
-    "stage": "APPROVAL_2",
+    "status": "PROCUREMENT_COMPLETED",
+    "stage": "END",
     "decision": "REPLACE",
     "decision_note": null,
     "initial_mo_id": null,
@@ -2487,9 +2487,9 @@
     },
     "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 engine nacelle. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
     "pr_id": "PR-45B822",
-    "pr_status": "PENDING_APPROVAL",
-    "po_id": null,
-    "total_cost": null,
+    "pr_status": "APPROVED",
+    "po_id": "PO-8C0C95",
+    "total_cost": 1150.0,
     "approvals": [
       {
         "stage": "APPROVAL_1",
@@ -2497,10 +2497,17 @@
         "by": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
         "at": "2026-04-18T13:12:11",
         "note": "Replacement chosen by Akshaya Shanmugam (akshayashanmugam322@gmail.com) \u00b7 EWM status NONE \u00b7 'engine nacelle' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "stage": "APPROVAL_2",
+        "decision": "APPROVE_PR",
+        "by": "Akshaya Shanmugam (akshayashanmugam522@gmail.com)",
+        "at": "2026-04-18T13:22:27",
+        "note": "PR PR-45B822 approved \u2192 PO PO-8C0C95 issued. 1 \u00d7 engine nacelle from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
       }
     ],
     "created_at": "2026-04-18T13:08:45",
-    "updated_at": "2026-04-18T13:12:11",
+    "updated_at": "2026-04-18T13:22:27",
     "history": [
       {
         "action": "CASE_DRAFTED",
@@ -2525,6 +2532,12 @@
         "at": "2026-04-18T13:12:11",
         "by": "system (for Akshaya Shanmugam (akshayashanmugam322@gmail.com))",
         "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-45B822 raised for 1 units, awaiting Approval 2."
+      },
+      {
+        "action": "PROCUREMENT_COMPLETED",
+        "at": "2026-04-18T13:22:27",
+        "by": "Akshaya Shanmugam (akshayashanmugam522@gmail.com)",
+        "note": "PR PR-45B822 approved \u2192 PO PO-8C0C95 issued. 1 \u00d7 engine nacelle from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
       }
     ]
   },
@@ -2676,6 +2689,89 @@
         "at": "2026-04-18T13:10:38",
         "by": "system (for Akshaya Shanmugam (akshayashanmugam322@gmail.com))",
         "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-12F927 raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1021",
+    "image_path": "uploads/91b6bfe69096.jpeg",
+    "component": "jet engine",
+    "defect": "fire damage",
+    "damaged_area": "engine nozzle",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-1234",
+    "ai_report": "The image shows a jet engine with visible fire damage, likely due to a malfunction or failure of engine components.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity fire damage on jet engine exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'jet engine' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "jet engine",
+        "defect": "fire damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity fire damage on jet engine exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "akshayashanmugam292@gmail.com",
+      "name": "Akshaya Shanmugam",
+      "role": "operator"
+    },
+    "operator_username": "akshayashanmugam292@gmail.com",
+    "operator_name": "Akshaya Shanmugam",
+    "operator_label": "Akshaya Shanmugam (akshayashanmugam292@gmail.com)",
+    "status": "DRAFT",
+    "stage": "OPERATOR_REVIEW",
+    "decision": null,
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": null,
+    "ewm_snapshot": null,
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 0,
+    "supplier": null,
+    "supplier_reason": null,
+    "pr_id": null,
+    "pr_status": null,
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [],
+    "created_at": "2026-04-18T13:21:17",
+    "updated_at": "2026-04-18T13:21:17",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T13:21:17",
+        "by": "Akshaya Shanmugam (akshayashanmugam292@gmail.com)",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
       }
     ]
   }

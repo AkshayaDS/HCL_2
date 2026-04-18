@@ -632,10 +632,17 @@
           <div class="k">Required</div><div class="v">${c.required_qty}</div>
           <div class="k">Reservable</div><div class="v">${c.ewm_snapshot.reservable_qty}</div>
           <div class="k">Shortage</div><div class="v">${c.ewm_snapshot.shortage_qty}</div>
-          <div class="k">Unit price</div><div class="v">${fmt.money(c.ewm_snapshot.unit_price)}</div>
         </div>
         <p class="small muted" style="margin-top:8px;">${esc(c.ewm_snapshot.message)}</p>
       </div>` : '';
+
+    let supUnit = 0;
+    let estTotal = 0;
+    if (c.supplier && c.ewm_snapshot) {
+      const ewmUnit = Number(c.ewm_snapshot.unit_price || 1500); 
+      supUnit = ewmUnit * (c.supplier.cost_multiplier || 1.15);
+      estTotal = Number(c.ewm_snapshot.shortage_qty || 0) * supUnit;
+    }
 
     const supplierBlock = c.supplier ? `
       <div class="card" style="margin-top:14px;">
@@ -643,7 +650,8 @@
         <div class="kv" style="margin-top:10px;">
           <div class="k">Supplier</div><div class="v"><strong>${esc(c.supplier.name)}</strong> · ${esc(c.supplier.supplier_id)}</div>
           <div class="k">Location</div><div class="v">${esc(c.supplier.location)} (${c.supplier.distance_km} km)</div>
-          <div class="k">Quality</div><div class="v">${c.supplier.quality}/10</div>
+          <div class="k">Supplier unit price</div><div class="v">${fmt.money(supUnit)}</div>
+          <div class="k">Est. Total</div><div class="v"><strong>${fmt.money(estTotal)}</strong></div>
           <div class="k">Lead time</div><div class="v">${c.supplier.delivery_days} days</div>
           <div class="k">Certified</div><div class="v">${c.supplier.certified ? '✓' : '✕'}</div>
         </div>
