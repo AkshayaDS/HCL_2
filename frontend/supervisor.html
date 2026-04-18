@@ -454,33 +454,25 @@
       </tr>`).join('');
   }
 
-  /* ═════════ APPROVAL 2 · PO QUEUE ═════════
-   * Each row represents a *pending* Purchase Order — the PR is its draft
-   * and approving issues the PO immediately. We render supplier + total
-   * cost estimate so the supervisor sees the full commercial commitment. */
+  /* ═════════ APPROVAL 2 · PR QUEUE ═════════
+   * Each row represents a *pending* Purchase Requisition — the PR is its draft
+   * and approving issues the PO immediately. */
   function renderPRQueue(prs) {
     const host = document.getElementById('pr-list');
     if (!prs || !prs.length) {
-      host.innerHTML = `<div class="empty-state"><div class="big">✅</div><div>No POs pending — approvals are caught up.</div></div>`;
+      host.innerHTML = `<div class="empty-state"><div class="big">✅</div><div>No PRs pending — approvals are caught up.</div></div>`;
       return;
     }
     host.innerHTML = `<table class="table">
-      <thead><tr><th>Draft PO</th><th>Case</th><th>Component</th><th>Qty</th><th>Supplier</th><th>Est. Total</th><th>Created</th><th></th></tr></thead>
+      <thead><tr><th>Draft PO</th><th>Case</th><th>Component</th><th>Qty</th><th>Created</th><th></th></tr></thead>
       <tbody>
       ${prs.map(pr => {
-        const caseRow = (allCases || []).find(c => c.case_id === pr.case_id) || {};
-        const unit = Number((caseRow.supplier && caseRow.supplier.unit_price)
-          || (caseRow.ewm_snapshot && caseRow.ewm_snapshot.unit_price)
-          || pr.unit_price || 1000);
-        const estTotal = unit * (Number(pr.quantity) || 0);
         return `
         <tr>
           <td><strong>${esc(pr.pr_id)}</strong><div class="muted small">Pending PO</div></td>
           <td>${esc(pr.case_id)}</td>
           <td>${esc(pr.component)}</td>
           <td>${pr.quantity}</td>
-          <td>${esc(pr.supplier_name)}</td>
-          <td>${fmt.money(estTotal)}</td>
           <td class="small muted">${fmt.dateTime(pr.created_at)}</td>
           <td class="flex gap-8">
             <button class="btn btn-sm btn-primary" data-open="${esc(pr.case_id)}">Open case</button>
