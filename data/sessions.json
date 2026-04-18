@@ -52,5 +52,17 @@
     "role": "supervisor",
     "issued_at": "2026-04-18T13:21:43",
     "expires_at": "2026-04-18T19:51:43.484982+00:00"
+  },
+  "O2uVXMRETD7dqYe7JEEk2NhetU-L89u3gXr-CWxjC3U": {
+    "username": "akshayashanmugam22@gmail.com",
+    "role": "operator",
+    "issued_at": "2026-04-18T13:54:21",
+    "expires_at": "2026-04-18T20:24:21.159310+00:00"
+  },
+  "9XDu0_PVLf3POiYqH2DDZ65k9u0vf6V-Cziqm0tAIUQ": {
+    "username": "akshayashanmugam5522@gmail.com",
+    "role": "supervisor",
+    "issued_at": "2026-04-18T13:55:15",
+    "expires_at": "2026-04-18T20:25:15.219947+00:00"
   }
 }

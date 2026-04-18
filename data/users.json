@@ -57,7 +57,7 @@
     "salt": "3943b6f80e2ac0971886cf61d4dc7ce4",
     "password_hash": "202e28dc84452e58463e7fbb4e4c0c54d61f13bd06cbeaca271b188fb9edb2fb",
     "created_at": "2026-04-18T12:59:33",
-    "last_login": null
+    "last_login": "2026-04-18T13:54:21"
   },
   {
     "username": "akshayashanmugam322@gmail.com",
@@ -87,6 +87,16 @@
     "salt": "f3ccc2216c95fbd232723d73d1e7b998",
     "password_hash": "b9fa95e1fc498f0564a8e6a63e76f6322ed4cd2b591332db52d3f9ab5ddf657e",
     "created_at": "2026-04-18T13:21:43",
+    "last_login": null
+  },
+  {
+    "username": "akshayashanmugam5522@gmail.com",
+    "name": "Akshaya Shanmugam",
+    "email": "akshayashanmugam5522@gmail.com",
+    "role": "supervisor",
+    "salt": "5a5f5b1301beacac86e63ecd089c53f8",
+    "password_hash": "b903c8bad37aa824bf5341f92470801d4b51f3302de28be8bdb58257379d6193",
+    "created_at": "2026-04-18T13:55:15",
     "last_login": null
   }
 ]

@@ -194,5 +194,19 @@
     "updated_at": "2026-04-18T13:22:27",
     "approved_at": "2026-04-18T13:22:27",
     "approved_by": "Akshaya Shanmugam (akshayashanmugam522@gmail.com)"
+  },
+  {
+    "pr_id": "PR-91814E",
+    "case_id": "CASE-1022",
+    "component": "jet engine",
+    "quantity": 1,
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "status": "PENDING_APPROVAL",
+    "note": "Shortage of 1 \u00d7 jet engine \u2014 EWM NONE",
+    "created_at": "2026-04-18T13:55:32",
+    "updated_at": "2026-04-18T13:55:32",
+    "approved_at": null,
+    "approved_by": null
   }
 ]
