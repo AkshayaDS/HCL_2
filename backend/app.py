@@ -849,25 +849,36 @@ def replace_preview():
 
 @app.route("/api/maintenance-orders", methods=["GET"])
 def maintenance_orders_list():
-    return jsonify(load_json("maintenance_orders.json"))
+    data = load_json("maintenance_orders.json")
+    if isinstance(data, list):
+        data.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    return jsonify(data)
 
 
 @app.route("/api/reservations", methods=["GET"])
 def reservations_list():
-    return jsonify(load_json("reservations.json"))
+    data = load_json("reservations.json")
+    if isinstance(data, list):
+        data.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    return jsonify(data)
 
 
 @app.route("/api/purchase-orders", methods=["GET"])
 def purchase_orders_list():
-    return jsonify(load_json("purchase_orders.json"))
+    data = load_json("purchase_orders.json")
+    if isinstance(data, list):
+        data.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    return jsonify(data)
 
 
 @app.route("/api/purchase-requisitions", methods=["GET"])
 def purchase_requisitions_list():
     status = request.args.get("status")
     data = load_json("purchase_requisitions.json")
-    if status:
-        data = [p for p in data if (p.get("status") or "").upper() == status.upper()]
+    if isinstance(data, list):
+        if status:
+            data = [p for p in data if (p.get("status") or "").upper() == status.upper()]
+        data.sort(key=lambda x: x.get("created_at", ""), reverse=True)
     return jsonify(data)
 
 

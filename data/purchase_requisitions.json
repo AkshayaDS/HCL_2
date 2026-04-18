@@ -166,5 +166,33 @@
     "updated_at": "2026-04-18T11:55:00",
     "approved_at": null,
     "approved_by": null
+  },
+  {
+    "pr_id": "PR-12F927",
+    "case_id": "CASE-1020",
+    "component": "jet engine",
+    "quantity": 1,
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "status": "PENDING_APPROVAL",
+    "note": "Shortage of 1 \u00d7 jet engine \u2014 EWM NONE",
+    "created_at": "2026-04-18T13:10:38",
+    "updated_at": "2026-04-18T13:10:38",
+    "approved_at": null,
+    "approved_by": null
+  },
+  {
+    "pr_id": "PR-45B822",
+    "case_id": "CASE-1019",
+    "component": "engine nacelle",
+    "quantity": 1,
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "status": "PENDING_APPROVAL",
+    "note": "Shortage of 1 \u00d7 engine nacelle \u2014 EWM NONE",
+    "created_at": "2026-04-18T13:12:11",
+    "updated_at": "2026-04-18T13:12:11",
+    "approved_at": null,
+    "approved_by": null
   }
 ]

@@ -2376,5 +2376,307 @@
         "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-7BFA0D raised for 1 units, awaiting Approval 2."
       }
     ]
+  },
+  {
+    "case_id": "CASE-1019",
+    "image_path": "uploads/ac8ca1c6e56f.jpeg",
+    "component": "engine nacelle",
+    "defect": "deformation and tear",
+    "damaged_area": "engine inlet",
+    "severity": "HIGH",
+    "confidence": 0.95,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged aircraft engine nacelle with significant deformation and tear, likely caused by a foreign object ingestion or impact. The extent of the damage suggests a high severity level.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 88,
+      "reason": "High-severity deformation and tear on engine nacelle exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.95. Confidence amplifies severity signal.",
+        "Component 'engine nacelle' is not on the safety-critical list.",
+        "Composite risk score = 88/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "engine nacelle",
+        "defect": "deformation and tear",
+        "severity": "HIGH",
+        "confidence": 0.95,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.88,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity deformation and tear on engine nacelle exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "akshayashanmugam22@gmail.com",
+      "name": "kashs",
+      "role": "operator"
+    },
+    "operator_username": "akshayashanmugam22@gmail.com",
+    "operator_name": "kashs",
+    "operator_label": "kashs (akshayashanmugam22@gmail.com)",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "engine nacelle",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'engine nacelle' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T13:12:11"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 engine nacelle. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-45B822",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
+        "at": "2026-04-18T13:12:11",
+        "note": "Replacement chosen by Akshaya Shanmugam (akshayashanmugam322@gmail.com) \u00b7 EWM status NONE \u00b7 'engine nacelle' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T13:08:45",
+    "updated_at": "2026-04-18T13:12:11",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T13:08:45",
+        "by": "kashs (akshayashanmugam22@gmail.com)",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T13:08:47",
+        "by": "kashs (akshayashanmugam22@gmail.com)",
+        "note": "kashs (akshayashanmugam22@gmail.com) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T13:12:11",
+        "by": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
+        "note": "Replacement chosen by Akshaya Shanmugam (akshayashanmugam322@gmail.com) \u00b7 EWM status NONE \u00b7 'engine nacelle' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T13:12:11",
+        "by": "system (for Akshaya Shanmugam (akshayashanmugam322@gmail.com))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-45B822 raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1020",
+    "image_path": "uploads/e797af8bd867.jpeg",
+    "component": "jet engine",
+    "defect": "fire damage",
+    "damaged_area": "engine nozzle",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-1234",
+    "ai_report": "The image shows a jet engine with visible fire damage, likely caused by an in-flight engine failure. The severity of the damage is high due to the presence of flames.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity fire damage on jet engine exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'jet engine' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "jet engine",
+        "defect": "fire damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity fire damage on jet engine exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "akshayashanmugam322@gmail.com",
+      "name": "Akshaya Shanmugam",
+      "role": "supervisor"
+    },
+    "operator_username": "akshayashanmugam322@gmail.com",
+    "operator_name": "Akshaya Shanmugam",
+    "operator_label": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "jet engine",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'jet engine' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T13:10:38"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 jet engine. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-12F927",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
+        "at": "2026-04-18T13:10:38",
+        "note": "Replacement chosen by Akshaya Shanmugam (akshayashanmugam322@gmail.com) \u00b7 EWM status NONE \u00b7 'jet engine' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T13:09:47",
+    "updated_at": "2026-04-18T13:10:38",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T13:09:47",
+        "by": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T13:09:49",
+        "by": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
+        "note": "Akshaya Shanmugam (akshayashanmugam322@gmail.com) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T13:10:38",
+        "by": "Akshaya Shanmugam (akshayashanmugam322@gmail.com)",
+        "note": "Replacement chosen by Akshaya Shanmugam (akshayashanmugam322@gmail.com) \u00b7 EWM status NONE \u00b7 'jet engine' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T13:10:38",
+        "by": "system (for Akshaya Shanmugam (akshayashanmugam322@gmail.com))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-12F927 raised for 1 units, awaiting Approval 2."
+      }
+    ]
   }
 ]
