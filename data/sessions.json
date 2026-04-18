@@ -64,5 +64,11 @@
     "role": "supervisor",
     "issued_at": "2026-04-18T13:55:15",
     "expires_at": "2026-04-18T20:25:15.219947+00:00"
+  },
+  "QDDI3yTf1-YXUFNIjxtONAY99t0_94EfY_Im-vMns0Q": {
+    "username": "akshayashanmugam22@gmail.com",
+    "role": "operator",
+    "issued_at": "2026-04-18T14:24:34",
+    "expires_at": "2026-04-18T20:54:34.923719+00:00"
   }
 }

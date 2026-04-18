@@ -465,7 +465,7 @@
       return;
     }
     host.innerHTML = `<table class="table">
-      <thead><tr><th>Draft PO</th><th>Case</th><th>Component</th><th>Qty</th><th>Supplier</th><th>Est. Total</th><th>Created</th><th></th></tr></thead>
+      <thead><tr><th>PR ID</th><th>Case</th><th>Component</th><th>Qty</th><th>Created</th><th></th></tr></thead>
       <tbody>
       ${prs.map(pr => {
         const caseRow = (allCases || []).find(c => c.case_id === pr.case_id) || {};
@@ -475,16 +475,16 @@
         const estTotal = unit * (Number(pr.quantity) || 0);
         return `
         <tr>
-          <td><strong>${esc(pr.pr_id)}</strong><div class="muted small">Pending PO</div></td>
+          <td><strong>${esc(pr.pr_id)}</strong><div class="muted small">Pending Approval</div></td>
           <td>${esc(pr.case_id)}</td>
           <td>${esc(pr.component)}</td>
           <td>${pr.quantity}</td>
-          <td>${esc(pr.supplier_name)}</td>
-          <td>${fmt.money(estTotal)}</td>
+          
+          
           <td class="small muted">${fmt.dateTime(pr.created_at)}</td>
           <td class="flex gap-8">
             <button class="btn btn-sm btn-primary" data-open="${esc(pr.case_id)}">Open case</button>
-            <button class="btn btn-sm btn-success" data-approve="${esc(pr.case_id)}">Approve PO</button>
+            <button class="btn btn-sm btn-success" data-approve="${esc(pr.case_id)}">Approve PR</button>
             <button class="btn btn-sm btn-danger"  data-reject="${esc(pr.case_id)}">Reject</button>
           </td>
         </tr>`;
@@ -501,7 +501,7 @@
         || pr.unit_price || 1000);
       const estTotal = unit * (Number(pr.quantity) || 0);
       const ok = await ui.confirm({
-        title: 'Approve Purchase Order?',
+        title: 'Approve Purchase Requisition?',
         message: `This will issue PO to ${esc(pr.supplier_name || 'the selected supplier')} immediately. This action cannot be undone.`,
         tone: 'success',
         icon: '✓',
@@ -519,7 +519,8 @@
       try {
         const resp = await API.approvePR(caseId);
         await refreshAll();
-        const po = (resp && resp.po) || {};
+          switchTab('procurement');
+          const po = (resp && resp.po) || {};
         const prOut = (resp && resp.pr) || pr;
         const caseOut = (resp && resp.case) || caseRow;
         await ui.result({
@@ -1708,7 +1709,7 @@
         const estTotal = (Number((caseObj.ewm_snapshot && caseObj.ewm_snapshot.unit_price) || 1000))
           * (Number(pr.quantity) || 0);
         const ok = await ui.confirm({
-          title: 'Approve Purchase Order?',
+          title: 'Approve Purchase Requisition?',
           message: `This will issue the Purchase Order to the selected supplier. The action cannot be undone.`,
           tone: 'success',
           icon: '✓',
@@ -1727,7 +1728,8 @@
         const resp = await API.approvePR(caseId);
         closeModal();
         await refreshAll();
-        const po = (resp && resp.po) || {};
+          switchTab('procurement');
+          const po = (resp && resp.po) || {};
         const prOut = (resp && resp.pr) || pr;
         const caseOut = (resp && resp.case) || caseObj;
         await ui.result({
@@ -2147,3 +2149,5 @@
 </script>
 </body>
 </html>
+
+

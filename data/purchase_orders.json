@@ -58,5 +58,35 @@
     "expected_delivery_days": 2,
     "status": "CREATED",
     "created_at": "2026-04-18T13:22:27"
+  },
+  {
+    "po_id": "PO-1D0971",
+    "pr_id": "PR-1D1532",
+    "case_id": "CASE-1010",
+    "component": "airframe",
+    "quantity": 1,
+    "unit_price": 1000.0,
+    "total_cost": 1150.0,
+    "currency": "USD",
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "expected_delivery_days": 2,
+    "status": "CREATED",
+    "created_at": "2026-04-18T14:19:42"
+  },
+  {
+    "po_id": "PO-3787AA",
+    "pr_id": "PR-FA8914",
+    "case_id": "CASE-1023",
+    "component": "engine nacelle",
+    "quantity": 1,
+    "unit_price": 1000.0,
+    "total_cost": 1150.0,
+    "currency": "USD",
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "expected_delivery_days": 2,
+    "status": "CREATED",
+    "created_at": "2026-04-18T14:25:21"
   }
 ]

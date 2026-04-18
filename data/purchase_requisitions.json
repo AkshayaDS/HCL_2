@@ -90,12 +90,12 @@
     "quantity": 1,
     "supplier_id": "SUP-002",
     "supplier_name": "Pratt Titanium Supply",
-    "status": "PENDING_APPROVAL",
+    "status": "APPROVED",
     "note": "Shortage of 1 \u00d7 airframe \u2014 EWM NONE",
     "created_at": "2026-04-18T11:13:16",
-    "updated_at": "2026-04-18T11:13:16",
-    "approved_at": null,
-    "approved_by": null
+    "updated_at": "2026-04-18T14:19:42",
+    "approved_at": "2026-04-18T14:19:42",
+    "approved_by": "supervisor"
   },
   {
     "pr_id": "PR-375DD0",
@@ -208,5 +208,19 @@
     "updated_at": "2026-04-18T13:55:32",
     "approved_at": null,
     "approved_by": null
+  },
+  {
+    "pr_id": "PR-FA8914",
+    "case_id": "CASE-1023",
+    "component": "engine nacelle",
+    "quantity": 1,
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "status": "APPROVED",
+    "note": "Shortage of 1 \u00d7 engine nacelle \u2014 EWM NONE",
+    "created_at": "2026-04-18T14:25:03",
+    "updated_at": "2026-04-18T14:25:21",
+    "approved_at": "2026-04-18T14:25:21",
+    "approved_by": "kashs (akshayashanmugam22@gmail.com)"
   }
 ]
