@@ -152,5 +152,19 @@
     "updated_at": "2026-04-18T11:43:53",
     "approved_at": null,
     "approved_by": null
+  },
+  {
+    "pr_id": "PR-7BFA0D",
+    "case_id": "CASE-1018",
+    "component": "fuselage",
+    "quantity": 1,
+    "supplier_id": "SUP-002",
+    "supplier_name": "Pratt Titanium Supply",
+    "status": "PENDING_APPROVAL",
+    "note": "Shortage of 1 \u00d7 fuselage \u2014 EWM NONE",
+    "created_at": "2026-04-18T11:55:00",
+    "updated_at": "2026-04-18T11:55:00",
+    "approved_at": null,
+    "approved_by": null
   }
 ]

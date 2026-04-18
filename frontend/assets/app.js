@@ -716,7 +716,7 @@ function renderAssistant(pageKey) {
             <div class="voice-head-title">HCLTech · AI Force</div>
             <div class="voice-head-sub">
               <span class="dot"></span>
-              <span id="voice-status-text">Voice Agent · ElevenLabs</span>
+              <span id="voice-status-text">Voice Agent</span>
             </div>
           </div>
         </div>
