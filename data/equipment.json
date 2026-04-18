@@ -1,0 +1,41 @@
+{
+  "EQ-1234": {
+    "equipment_id": "EQ-1234",
+    "model": "RTX PW1000G",
+    "serial": "PW-10239",
+    "location": "Bay 3 - East Hangar",
+    "installed": "2019-06-14",
+    "flight_hours": 12840,
+    "last_inspection": "2026-02-11",
+    "maintenance_history": [
+      {"date": "2024-09-02", "action": "Blade polishing", "technician": "J. Alvarez"},
+      {"date": "2025-04-17", "action": "Bearing replacement", "technician": "M. Okafor"},
+      {"date": "2026-02-11", "action": "Routine borescope inspection", "technician": "S. Chen"}
+    ]
+  },
+  "EQ-2201": {
+    "equipment_id": "EQ-2201",
+    "model": "RTX F135",
+    "serial": "F135-44128",
+    "location": "Bay 1 - West Hangar",
+    "installed": "2021-03-22",
+    "flight_hours": 5980,
+    "last_inspection": "2026-01-28",
+    "maintenance_history": [
+      {"date": "2023-11-04", "action": "Combustor liner swap", "technician": "R. Patel"},
+      {"date": "2025-07-09", "action": "Nozzle re-calibration", "technician": "L. Fernandes"}
+    ]
+  },
+  "EQ-3310": {
+    "equipment_id": "EQ-3310",
+    "model": "RTX GTF Advantage",
+    "serial": "GTF-88102",
+    "location": "Bay 5 - South Hangar",
+    "installed": "2022-08-05",
+    "flight_hours": 3200,
+    "last_inspection": "2026-03-30",
+    "maintenance_history": [
+      {"date": "2025-02-19", "action": "Fan blade re-torque", "technician": "E. Johansson"}
+    ]
+  }
+}

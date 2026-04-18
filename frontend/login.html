@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Portal · HCL AI Force</title>
+  <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
+  <link rel="manifest" href="/assets/img/site.webmanifest">
+  <link rel="stylesheet" href="/assets/style.css?v=19">
+  <style>
+    /* ─── Auth page scaffolding ──────────────────────────────────────────── */
+    body { overflow-x: hidden; }
+    .auth-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(320px, 1.05fr) minmax(420px, 1fr);
+      gap: 0;
+      position: relative;
+      z-index: 1;
+    }
+    @media (max-width: 960px) { .auth-shell { grid-template-columns: 1fr; } }
+
+    /* ─── Brand panel (left) ─────────────────────────────────────────────── */
+    .brand-panel {
+      position: relative;
+      padding: 64px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(0, 108, 248, 0.45), transparent 60%),
+        radial-gradient(900px 700px at 0% 100%, rgba(0, 171, 255, 0.28), transparent 60%),
+        linear-gradient(160deg, #15061f 0%, #0B0B0F 70%);
+      color: #fff;
+      border-right: 1px solid rgba(0, 171, 255, 0.16);
+    }
+    html[data-theme="light"] .brand-panel {
+      background:
+        radial-gradient(1000px 700px at 10% 0%, rgba(0, 108, 248, 0.32), transparent 60%),
+        radial-gradient(900px 700px at 110% 100%, rgba(0, 171, 255, 0.28), transparent 60%),
+        linear-gradient(160deg, #2a0e4d 0%, #4a1d8a 70%);
+      color: #fff;
+    }
+    .brand-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 30% 50%, black 35%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 35%, transparent 75%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    .brand-panel::after {
+      content: "";
+      position: absolute;
+      right: -80px; top: 30%;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(0, 171, 255, 0.35), transparent 65%);
+      filter: blur(28px);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .brand-logo {
+      display: flex; align-items: center; gap: 14px;
+      font-family: var(--font-head);
+    }
+    .brand-logo .dot {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: var(--gradient-brand);
+      box-shadow: 0 0 24px rgba(0, 171, 255, 0.65);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .brand-logo .title { font-size: 1.4rem; letter-spacing: .5px; font-weight: 700; }
+    .brand-logo .title .sub { color: var(--purple-3); }
+    .brand-hero {
+      margin: 75px 0;
+      max-width: 540px;
+    }
+    .brand-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0, 171, 255, 0.18);
+      border: 1px solid rgba(0, 171, 255, 0.45);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: .74rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #f4e5ff;
+      backdrop-filter: blur(8px);
+    }
+    .brand-chip .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #34D399;
+      box-shadow: 0 0 8px #34D399;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: .7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.25); } }
+
+    .brand-hero h1 {
+      margin: 25px 0 20px;
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -.5px;
+    }
+    .brand-hero h1 .accent {
+      background: linear-gradient(135deg, #00ABFF 0%, #0084FF 50%, #96D4FF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .brand-hero p {
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.6;
+      font-size: 1rem;
+      max-width: 460px;
+    }
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 460px;
+    }
+    .brand-feature {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+    }
+    .brand-feature .ic {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(0, 171, 255, 0.18);
+      border: 1px solid rgba(0, 171, 255, 0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .brand-feature b { display: block; font-size: .92rem; margin-bottom: 2px; }
+    .brand-feature p { color: rgba(255,255,255,0.72); font-size: .82rem; margin: 0; line-height: 1.4; }
+
+    .brand-footline { color: rgba(255,255,255,0.55); font-size: .78rem; }
+
+    /* Decorative floating jet — slower than the home jet, stays inside the brand panel */
+    .brand-jet {
+      position: absolute;
+      right: 10%;
+      top: 18%;
+      font-size: 4.2rem;
+      opacity: 0.25;
+      transform: scaleX(-1);
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5));
+      animation: brandJet 14s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes brandJet {
+      0%,100% { transform: scaleX(-1) translateY(0); }
+      50%     { transform: scaleX(-1) translateY(-18px); }
+    }
+
+    /* ─── Form panel (right) ─────────────────────────────────────────────── */
+    .form-panel {
+      padding: 60px 48px;
+      display: flex; flex-direction: column; justify-content: center;
+      background: var(--bg-0);
+      position: relative;
+    }
+    .form-wrap {
+      width: min(460px, 100%);
+      margin: 0 auto;
+    }
+    .form-heading {
+      margin-bottom: 24px;
+    }
+    .form-heading h2 {
+      font-size: 1.8rem; margin: 0 0 6px;
+      letter-spacing: -.3px;
+    }
+    .form-heading p { color: var(--text-2); font-size: .94rem; }
+
+    /* Role picker */
+    .role-picker {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    .role-option {
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 16px;
+      background: var(--bg-1);
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+      position: relative;
+      display: flex; flex-direction: column; gap: 6px;
+      text-align: left;
+    }
+    .role-option:hover { transform: translateY(-2px); border-color: var(--purple-3); }
+    .role-option.active {
+      border-color: var(--purple-2);
+      background: linear-gradient(135deg, rgba(0, 108, 248, 0.14), rgba(0, 171, 255, 0.06));
+      box-shadow: 0 12px 34px -12px rgba(0, 108, 248, 0.55);
+    }
+    .role-option.active::after {
+      content: "✓";
+      position: absolute; top: 10px; right: 12px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--gradient-brand);
+      color: #fff; font-size: .75rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .role-option .ic { font-size: 1.5rem; }
+    .role-option b { font-size: 1rem; }
+    .role-option p { color: var(--text-3); font-size: .78rem; margin: 0; line-height: 1.35; }
+
+    /* Tabs */
+    .tabs-row {
+      display: inline-flex;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 22px;
+      gap: 4px;
+    }
+    .tab-btn {
+      border: 0; background: transparent;
+      padding: 8px 18px;
+      border-radius: 8px;
+      color: var(--text-2);
+      font-weight: 600; font-family: inherit;
+      cursor: pointer;
+      font-size: .92rem;
+    }
+    .tab-btn.active {
+      background: var(--gradient-brand);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(0, 108, 248, 0.35);
+    }
+
+    /* Fields */
+    .field {
+      margin-bottom: 16px;
+    }
+    .field label {
+      display: block;
+      font-size: .82rem;
+      color: var(--text-2);
+      margin-bottom: 6px;
+      font-weight: 600;
+      letter-spacing: .3px;
+    }
+    .field .input-wrap {
+      position: relative;
+    }
+    .field .icon {
+      position: absolute;
+      left: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--text-3);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    .field input {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      background: var(--bg-1);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-1);
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .field input:focus {
+      border-color: var(--purple-3);
+      box-shadow: 0 0 0 4px rgba(0, 171, 255, 0.18);
+      background: var(--bg-0);
+    }
+    .field .reveal {
+      position: absolute;
+      right: 10px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: 0;
+      color: var(--text-3); cursor: pointer;
+      font-size: .88rem;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    .field .reveal:hover { color: var(--text-1); background: rgba(255,255,255,0.06); }
+
+    .form-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px; font-size: .85rem;
+    }
+    .form-row .remember { display: flex; align-items: center; gap: 8px; color: var(--text-2); }
+    .form-row .remember input { accent-color: var(--purple-2); }
+    .form-row a { color: var(--purple-3); text-decoration: none; }
+    .form-row a:hover { text-decoration: underline; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 0;
+      background: var(--gradient-brand);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px -10px rgba(0, 108, 248, 0.65);
+      transition: transform .15s ease, box-shadow .15s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -10px rgba(0, 108, 248, 0.75); }
+    .submit-btn[disabled] { opacity: .65; cursor: not-allowed; transform: none; }
+
+    .alt-line {
+      text-align: center;
+      font-size: .86rem; color: var(--text-3);
+      margin-top: 18px;
+    }
+    .alt-line a { color: var(--purple-3); font-weight: 600; text-decoration: none; }
+    .alt-line a:hover { text-decoration: underline; }
+
+    .status-strip {
+      display: flex; gap: 8px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: var(--text-1);
+      font-size: .86rem;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .status-strip.hidden { display: none; }
+    .status-strip.ok {
+      background: rgba(52, 211, 153, 0.10);
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+
+    /* Top-of-page bar */
+    .auth-topbar {
+      position: absolute; top: 24px; left: 56px; right: 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 5;
+    }
+    .auth-topbar .back {
+      color: rgba(255,255,255,0.7);
+      font-size: .85rem;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 6px 12px;
+      border-radius: 999px;
+      transition: background .15s ease;
+    }
+    .auth-topbar .back:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .auth-topbar .theme-toggle {
+      border: 1px solid var(--border);
+      background: var(--bg-1);
+      color: var(--text-1);
+      width: 36px; height: 36px; border-radius: 50%;
+      cursor: pointer;
+      position: absolute;
+      right: 0;
+    }
+    @media (max-width: 960px) {
+      .auth-topbar { left: 20px; right: 20px; }
+      .brand-panel, .form-panel { padding: 32px 20px; }
+      .brand-panel { min-height: 360px; }
+    }
+  </style>
+</head>
+<body>
+<div class="auth-topbar">
+  <a class="back" href="/home">← About the platform</a>
+  <button class="theme-toggle" id="t-theme" title="Toggle theme">🌙</button>
+</div>
+
+<main class="auth-shell">
+  <!-- Brand panel ───────────────────────────────────────────────────── -->
+  <aside class="brand-panel">
+    <div class="brand-logo">
+      <div class="dot">✦</div>
+      <div class="title">HCL AI <span class="sub">Force</span></div>
+    </div>
+
+    <div class="brand-hero">
+      <span class="brand-chip"><span class="dot"></span> Secure access portal</span>
+      <h1>Image to <span class="accent">Action</span><br>Engine to <span class="accent">SAP</span></h1>
+      <p>
+        Sign in to the agentic AI platform for aviation MRO maintenance &amp; procurement.
+        Every photo becomes a maintenance order — every decision runs the
+        EWM + Supplier + PR + PO workflow under dual supervisor approval.
+      </p>
+    </div>
+
+    <div class="brand-features">
+      <div class="brand-feature">
+        <div class="ic">🧠</div>
+        <div>
+          <b>Vision Agent</b>
+          <p>Component, defect, damaged area, severity — identified by the AI Agent in seconds.</p>
+        </div>
+      </div>
+      <div class="brand-feature">
+        <div class="ic">🛡</div>
+        <div>
+          <b>Two-stage supervisor approval</b>
+          <p>Decision gate + PR-to-PO gate — override the AI Agent consciously.</p>
+        </div>
+      </div>
+      <div class="brand-feature">
+        <div class="ic">📦</div>
+        <div>
+          <b>Live EWM + Agent-driven supplier orchestration</b>
+          <p>FULL / PARTIAL / NONE check with top-ranked certified suppliers.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-footline">© <span id="brand-year"></span> HCL Technologies · AI Force</div>
+    <div class="brand-jet">✈️</div>
+  </aside>
+
+  <!-- Form panel ───────────────────────────────────────────────────── -->
+  <section class="form-panel">
+    <div class="form-wrap">
+
+      <div class="form-heading">
+        <h2 id="form-title">Welcome back</h2>
+        <p id="form-sub">Sign in to continue to the platform.</p>
+      </div>
+
+      <!-- Role picker -->
+      <div class="role-picker" id="role-picker">
+        <button type="button" class="role-option" data-role="operator">
+          <div class="ic">📷</div>
+          <b>Operator</b>
+          <p>Capture inspection images and file cases.</p>
+        </button>
+        <button type="button" class="role-option" data-role="supervisor">
+          <div class="ic">🛡</div>
+          <b>Supervisor</b>
+          <p>Review cases, approve repair/replace + PR/PO.</p>
+        </button>
+      </div>
+
+      <!-- Sign In / Create Account tabs -->
+      <div class="tabs-row" id="tabs">
+        <button type="button" class="tab-btn active" data-mode="login">Sign In</button>
+        <button type="button" class="tab-btn" data-mode="register">Create Account</button>
+      </div>
+
+      <div class="status-strip hidden" id="status"></div>
+
+      <form id="auth-form" autocomplete="on">
+        <div class="field" id="group-name" style="display:none;">
+          <label for="name-input">Full name</label>
+          <div class="input-wrap">
+            <span class="icon">👤</span>
+            <input type="text" id="name-input" placeholder="e.g. Jane Doe" autocomplete="name">
+          </div>
+        </div>
+        <div class="field" id="group-email" style="display:none;">
+          <label for="email-input">Work email <span class="muted small" style="font-weight:400;">(optional)</span></label>
+          <div class="input-wrap">
+            <span class="icon">✉</span>
+            <input type="email" id="email-input" placeholder="jane.doe@hcl.com" autocomplete="email">
+          </div>
+        </div>
+        <div class="field">
+          <label for="user-input">Username / Employment ID</label>
+          <div class="input-wrap">
+            <span class="icon">🪪</span>
+            <input type="text" id="user-input" placeholder="e.g. OP-8821" required autocomplete="username">
+          </div>
+        </div>
+        <div class="field">
+          <label for="pass-input">Secure passcode</label>
+          <div class="input-wrap">
+            <span class="icon">🔒</span>
+            <input type="password" id="pass-input" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="reveal" id="pass-reveal">Show</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="remember"><input type="checkbox" id="remember" checked> Keep me signed in</label>
+          <a href="#" id="forgot-link">Need help?</a>
+        </div>
+
+        <button type="submit" class="submit-btn" id="btn-submit">
+          <span id="btn-label">Sign in securely</span>
+          <span id="btn-spinner" style="display:none;">
+            <span class="spinner" style="width:16px; height:16px; border-width:2px;"></span>
+          </span>
+        </button>
+
+        <div class="alt-line" id="alt-line">
+          New to HCL AI Force? <a href="#" id="alt-switch">Create an account →</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script src="/assets/app.js?v=19"></script>
+<script>
+  document.getElementById('brand-year').textContent = new Date().getFullYear();
+
+  // ─── Theme toggle ───────────────────────────────────────────────────
+  const themeBtn = document.getElementById('t-theme');
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = t === 'dark' ? '🌙' : '☀️';
+    try { localStorage.setItem('hcl-theme', t); } catch {}
+  }
+  applyTheme(localStorage.getItem('hcl-theme') || 'dark');
+  themeBtn.addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+  // ─── URL-driven role default ────────────────────────────────────────
+  const urlParams = new URLSearchParams(location.search);
+  let activeRole = (urlParams.get('role') || 'operator').toLowerCase();
+  if (!['operator', 'supervisor'].includes(activeRole)) activeRole = 'operator';
+
+  // ─── Role picker ────────────────────────────────────────────────────
+  const rolePicker = document.getElementById('role-picker');
+  function setRole(role) {
+    activeRole = role;
+    rolePicker.querySelectorAll('.role-option').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.role === role);
+    });
+    const url = new URL(location.href); url.searchParams.set('role', role); history.replaceState({}, '', url);
+  }
+  rolePicker.addEventListener('click', (e) => {
+    const btn = e.target.closest('.role-option');
+    if (btn) setRole(btn.dataset.role);
+  });
+  setRole(activeRole);
+
+  // ─── Login / Register tabs ──────────────────────────────────────────
+  let mode = 'login';
+  const tabs = document.getElementById('tabs');
+  const formTitle = document.getElementById('form-title');
+  const formSub = document.getElementById('form-sub');
+  const btnLabel = document.getElementById('btn-label');
+  const groupName = document.getElementById('group-name');
+  const groupEmail = document.getElementById('group-email');
+  const altLine = document.getElementById('alt-line');
+
+  function setMode(newMode) {
+    mode = newMode;
+    tabs.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    const isReg = mode === 'register';
+    groupName.style.display  = isReg ? 'block' : 'none';
+    groupEmail.style.display = isReg ? 'block' : 'none';
+    formTitle.textContent    = isReg ? 'Create your account' : 'Welcome back';
+    formSub.textContent      = isReg ? 'Just a few details and you’re in.' : 'Sign in to continue to the platform.';
+    btnLabel.textContent     = isReg ? 'Create account & sign in' : 'Sign in securely';
+    altLine.innerHTML        = isReg
+      ? 'Already registered? <a href="#" id="alt-switch">Sign in →</a>'
+      : 'New to HCL AI Force? <a href="#" id="alt-switch">Create an account →</a>';
+    document.getElementById('alt-switch').addEventListener('click', (e) => {
+      e.preventDefault();
+      setMode(mode === 'login' ? 'register' : 'login');
+    });
+    document.getElementById('pass-input').setAttribute('autocomplete', isReg ? 'new-password' : 'current-password');
+  }
+  tabs.addEventListener('click', (e) => { const b = e.target.closest('.tab-btn'); if (b) setMode(b.dataset.mode); });
+  setMode('login');
+
+  // ─── Password reveal toggle ─────────────────────────────────────────
+  const passInput = document.getElementById('pass-input');
+  const passReveal = document.getElementById('pass-reveal');
+  passReveal.addEventListener('click', () => {
+    const show = passInput.type === 'password';
+    passInput.type = show ? 'text' : 'password';
+    passReveal.textContent = show ? 'Hide' : 'Show';
+  });
+
+  // ─── Status strip ───────────────────────────────────────────────────
+  const status = document.getElementById('status');
+  function showStatus(msg, kind='error') {
+    status.textContent = msg;
+    status.classList.remove('hidden', 'ok');
+    if (kind === 'ok') status.classList.add('ok');
+  }
+  function clearStatus() { status.classList.add('hidden'); }
+
+  // ─── Submit handler (talks to backend auth) ─────────────────────────
+  const form = document.getElementById('auth-form');
+  const btn = document.getElementById('btn-submit');
+  const btnSpinner = document.getElementById('btn-spinner');
+
+  async function postJSON(url, body) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {}),
+    });
+    let data = null;
+    try { data = await res.json(); } catch {}
+    if (!res.ok) {
+      const err = new Error((data && (data.message || data.error)) || `Request failed (${res.status})`);
+      err.status = res.status;
+      err.payload = data || {};
+      throw err;
+    }
+    return data;
+  }
+
+  function setLoading(on) {
+    btn.disabled = on;
+    btnLabel.style.display = on ? 'none' : '';
+    btnSpinner.style.display = on ? 'inline-flex' : 'none';
+  }
+
+  function persistSession(data, remember) {
+    const store = remember ? localStorage : sessionStorage;
+    store.setItem('hcl_auth_token', data.token || '');
+    store.setItem('hcl_auth_user', JSON.stringify(data.user || {}));
+    // Back-compat: older parts of the app still read these keys.
+    try {
+      const u = data.user || {};
+      localStorage.setItem('currentUser', u.username || '');
+      localStorage.setItem('currentRole', u.role || '');
+      const users = JSON.parse(localStorage.getItem('ai_force_users') || '{}');
+      users[u.username] = { name: u.name || u.username, role: u.role, email: u.email };
+      localStorage.setItem('ai_force_users', JSON.stringify(users));
+    } catch {}
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearStatus();
+
+    const username = document.getElementById('user-input').value.trim();
+    const password = passInput.value;
+    const fullName = document.getElementById('name-input').value.trim();
+    const email    = document.getElementById('email-input').value.trim();
+    const remember = document.getElementById('remember').checked;
+
+    if (!username || !password) { showStatus('Username and password are required.'); return; }
+    if (mode === 'register' && !fullName) { showStatus('Please enter your full name to register.'); return; }
+
+    setLoading(true);
+    try {
+      let data;
+      if (mode === 'register') {
+        data = await postJSON('/api/auth/register', {
+          username, password, name: fullName, email, role: activeRole,
+        });
+      } else {
+        data = await postJSON('/api/auth/login', {
+          username, password, role: activeRole,
+        });
+      }
+      persistSession(data, remember);
+      showStatus(mode === 'register' ? 'Account created — welcome aboard.' : 'Authenticated — redirecting…', 'ok');
+      setTimeout(() => { window.location.href = `/${activeRole}`; }, 600);
+    } catch (err) {
+      setLoading(false);
+      showStatus(err.message || 'Unable to complete the request.');
+    }
+  });
+
+  // Voice assistant is intentionally NOT mounted on the login screen —
+  // the orb panel would overlap the sign-in form. It appears again
+  // automatically after the user reaches /operator or /supervisor.
+
+  // ─── If already signed in with the selected role, short-circuit ────
+  (async function redirectIfSignedIn() {
+    try {
+      const token = localStorage.getItem('hcl_auth_token') || sessionStorage.getItem('hcl_auth_token');
+      if (!token) return;
+      const res = await fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.user && data.user.role === activeRole) {
+        showStatus('Already signed in — continuing…', 'ok');
+        setTimeout(() => { window.location.href = `/${activeRole}`; }, 400);
+      }
+    } catch {}
+  })();
+</script>
+</body>
+</html>

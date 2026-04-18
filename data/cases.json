@@ -1,0 +1,2229 @@
+[
+  {
+    "case_id": "CASE-1001",
+    "image_path": "uploads/258faef0dee8.jpg",
+    "component": "fuselage",
+    "defect": "severe burn damage",
+    "damaged_area": "right side",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged aircraft component, likely a fuselage section, with severe burn damage on the right side. The damage appears extensive, with significant charring and deformation.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'fuselage' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "fuselage",
+        "defect": "severe burn damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "PROCUREMENT_COMPLETED",
+    "stage": "END",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "fuselage",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'fuselage' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-17T00:41:43"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 fuselage. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-D27209",
+    "pr_status": "APPROVED",
+    "po_id": "PO-01DA94",
+    "total_cost": 1150.0,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "supervisor",
+        "at": "2026-04-17T00:41:43",
+        "note": "Replacement chosen \u00b7 EWM status NONE \u00b7 'fuselage' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "stage": "APPROVAL_2",
+        "decision": "APPROVE_PR",
+        "by": "supervisor",
+        "at": "2026-04-17T00:42:35",
+        "note": "PR PR-D27209 approved \u2192 PO PO-01DA94 issued. 1 \u00d7 fuselage from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
+      }
+    ],
+    "created_at": "2026-04-17T00:41:16",
+    "updated_at": "2026-04-17T00:42:35",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T00:41:16",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-17T00:41:43",
+        "by": "supervisor",
+        "note": "Replacement chosen \u00b7 EWM status NONE \u00b7 'fuselage' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-17T00:41:43",
+        "by": "system",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-D27209 raised for 1 units, awaiting Approval 2."
+      },
+      {
+        "action": "PROCUREMENT_COMPLETED",
+        "at": "2026-04-17T00:42:35",
+        "by": "supervisor",
+        "note": "PR PR-D27209 approved \u2192 PO PO-01DA94 issued. 1 \u00d7 fuselage from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1002",
+    "image_path": "uploads/815d010ea819.jpg",
+    "component": "fuselage",
+    "defect": "extensive damage",
+    "damaged_area": "entire structure",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-3310",
+    "ai_report": "The image appears to show a severely damaged airplane, likely after a crash, with extensive structural damage to the fuselage and wings.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity extensive damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'fuselage' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "fuselage",
+        "defect": "extensive damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity extensive damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "UNDER_REPAIR",
+    "stage": "END",
+    "decision": "REPAIR",
+    "decision_note": null,
+    "initial_mo_id": "MO-E5FA8D",
+    "repair_mo_id": "MO-E5FA8D",
+    "required_qty": 1,
+    "ewm_status": null,
+    "ewm_snapshot": null,
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 0,
+    "supplier": null,
+    "supplier_reason": null,
+    "pr_id": null,
+    "pr_status": null,
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPAIR",
+        "by": "supervisor",
+        "at": "2026-04-17T00:50:22",
+        "note": "Repair approved by supervisor \u2014 Maintenance Order MO-E5FA8D created and UNDER_REPAIR (priority URGENT)."
+      }
+    ],
+    "created_at": "2026-04-17T00:50:05",
+    "updated_at": "2026-04-17T00:50:22",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T00:50:05",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REPAIR_STARTED",
+        "at": "2026-04-17T00:50:22",
+        "by": "supervisor",
+        "note": "Repair approved by supervisor \u2014 Maintenance Order MO-E5FA8D created and UNDER_REPAIR (priority URGENT)."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1003",
+    "image_path": "uploads/e7e310f55836.jpg",
+    "component": "fuselage",
+    "defect": "severe burn damage",
+    "damaged_area": "center section",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-3310",
+    "ai_report": "The image shows a damaged airplane fuselage with severe burn damage in the center section, indicating a high severity of damage.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'fuselage' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "fuselage",
+        "defect": "severe burn damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "fuselage",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'fuselage' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-17T19:28:02"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 fuselage. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-55286E",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-17T19:28:02",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'fuselage' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-17T01:05:33",
+    "updated_at": "2026-04-17T19:28:02",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T01:05:33",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-17T19:28:02",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'fuselage' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-17T19:28:02",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-55286E raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1004",
+    "image_path": "uploads/23e9a02ca831.jpg",
+    "component": "fuselage",
+    "defect": "severe burn damage",
+    "damaged_area": "center section",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-3310",
+    "ai_report": "The image depicts a commercial airliner with significant damage to the fuselage, likely due to a fire or explosion. The extent of the damage suggests a high severity level.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'fuselage' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "fuselage",
+        "defect": "severe burn damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "REJECTED",
+    "stage": "END",
+    "decision": "REJECT",
+    "decision_note": "unnecessary",
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": null,
+    "ewm_snapshot": null,
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 0,
+    "supplier": null,
+    "supplier_reason": null,
+    "pr_id": null,
+    "pr_status": null,
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REJECT",
+        "by": "abcde (abcde)",
+        "at": "2026-04-17T20:30:09",
+        "note": "unnecessary"
+      }
+    ],
+    "created_at": "2026-04-17T01:09:04",
+    "updated_at": "2026-04-17T20:30:09",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T01:09:04",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REJECTED",
+        "at": "2026-04-17T20:30:09",
+        "by": "abcde (abcde)",
+        "note": "unnecessary"
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1005",
+    "image_path": "uploads/847927e5fcbe.jpg",
+    "component": "airframe",
+    "defect": "severe burn damage",
+    "damaged_area": "fuselage and wings",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-3310",
+    "ai_report": "The image shows a white airplane with significant burn damage along the fuselage and wings, indicating a severe incident. The damage suggests a high severity level.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity severe burn damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "severe burn damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity severe burn damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "UNDER_REPAIR",
+    "stage": "END",
+    "decision": "REPAIR",
+    "decision_note": null,
+    "initial_mo_id": "MO-4B3CDD",
+    "repair_mo_id": "MO-4B3CDD",
+    "required_qty": 1,
+    "ewm_status": null,
+    "ewm_snapshot": null,
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 0,
+    "supplier": null,
+    "supplier_reason": null,
+    "pr_id": null,
+    "pr_status": null,
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPAIR",
+        "by": "abcde (abcde)",
+        "at": "2026-04-17T20:29:31",
+        "note": "Repair approved by abcde (abcde) \u2014 Maintenance Order MO-4B3CDD created and UNDER_REPAIR (priority URGENT). \u26a0 Supervisor OVERRIDE: AI recommended REPLACE but supervisor chose REPAIR. Justification: Supervisor chose REPAIR despite AI recommending REPLACE.."
+      }
+    ],
+    "created_at": "2026-04-17T01:17:11",
+    "updated_at": "2026-04-17T20:29:31",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T01:17:11",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REPAIR_STARTED",
+        "at": "2026-04-17T20:29:31",
+        "by": "abcde (abcde)",
+        "note": "Repair approved by abcde (abcde) \u2014 Maintenance Order MO-4B3CDD created and UNDER_REPAIR (priority URGENT). \u26a0 Supervisor OVERRIDE: AI recommended REPLACE but supervisor chose REPAIR. Justification: Supervisor chose REPAIR despite AI recommending REPLACE.."
+      }
+    ],
+    "override": {
+      "ai_recommendation": "REPLACE",
+      "supervisor_decision": "REPAIR",
+      "justification": "Supervisor chose REPAIR despite AI recommending REPLACE.",
+      "confirmed_at": "2026-04-17T14:59:17.045Z",
+      "by": "abcde (abcde)"
+    }
+  },
+  {
+    "case_id": "CASE-1006",
+    "image_path": "uploads/86e25a11c769.jpg",
+    "component": "aerospace component",
+    "defect": "crash damage",
+    "damaged_area": "multiple areas",
+    "severity": "HIGH",
+    "confidence": 0.8,
+    "equipment_id": "EQ-3310",
+    "ai_report": "The image appears to show a crashed aircraft with significant damage to the fuselage, wings, and tail section. The extent of the damage suggests a high severity level.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 82,
+      "reason": "High-severity crash damage on aerospace component exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.80. Confidence amplifies severity signal.",
+        "Component 'aerospace component' is not on the safety-critical list.",
+        "Composite risk score = 82/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "aerospace component",
+        "defect": "crash damage",
+        "severity": "HIGH",
+        "confidence": 0.8,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.82,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity crash damage on aerospace component exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "aerospace component",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'aerospace component' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-17T19:58:28"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 aerospace component. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-45A265",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-17T19:58:28",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'aerospace component' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-17T01:36:49",
+    "updated_at": "2026-04-17T19:58:28",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T01:36:49",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-17T19:58:28",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'aerospace component' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-17T19:58:28",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-45A265 raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1007",
+    "image_path": "uploads/8d6aecdd6efd.jpg",
+    "component": "airframe",
+    "defect": "extensive structural damage",
+    "damaged_area": "fuselage and wings",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a severely damaged airplane with significant structural failure, likely due to a crash or impact. The extent of the damage indicates a high severity level.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity extensive structural damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "extensive structural damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity extensive structural damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "PROCUREMENT_COMPLETED",
+    "stage": "END",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "airframe",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'airframe' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-17T19:31:52"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 airframe. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-E4F0B3",
+    "pr_status": "APPROVED",
+    "po_id": "PO-ADE237",
+    "total_cost": 1150.0,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-17T19:31:52",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "stage": "APPROVAL_2",
+        "decision": "APPROVE_PR",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:16:00",
+        "note": "PR PR-E4F0B3 approved \u2192 PO PO-ADE237 issued. 1 \u00d7 airframe from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
+      }
+    ],
+    "created_at": "2026-04-17T01:48:58",
+    "updated_at": "2026-04-18T11:16:00",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T01:48:58",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-17T19:31:52",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-17T19:31:52",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-E4F0B3 raised for 1 units, awaiting Approval 2."
+      },
+      {
+        "action": "PROCUREMENT_COMPLETED",
+        "at": "2026-04-18T11:16:00",
+        "by": "abcde (abcde)",
+        "note": "PR PR-E4F0B3 approved \u2192 PO PO-ADE237 issued. 1 \u00d7 airframe from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1008",
+    "image_path": "uploads/595ef2d64af7.jpg",
+    "component": "fuselage",
+    "defect": "severe burn damage",
+    "damaged_area": "center section",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-3310",
+    "ai_report": "The image appears to show a damaged airplane fuselage with severe burn damage in the center section, indicating a high severity defect.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'fuselage' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "fuselage",
+        "defect": "severe burn damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity severe burn damage on fuselage exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "status": "PROCUREMENT_COMPLETED",
+    "stage": "END",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "fuselage",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'fuselage' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-17T19:25:30"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 fuselage. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-EB4D21",
+    "pr_status": "APPROVED",
+    "po_id": "PO-F33895",
+    "total_cost": 1150.0,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-17T19:25:30",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'fuselage' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "stage": "APPROVAL_2",
+        "decision": "APPROVE_PR",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:28:36",
+        "note": "PR PR-EB4D21 approved \u2192 PO PO-F33895 issued. 1 \u00d7 fuselage from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
+      }
+    ],
+    "created_at": "2026-04-17T01:53:03",
+    "updated_at": "2026-04-18T11:28:36",
+    "history": [
+      {
+        "action": "CASE_CREATED",
+        "at": "2026-04-17T01:53:03",
+        "by": "operator",
+        "note": "AI inspection submitted \u2014 awaiting supervisor decision (no MO raised yet)."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-17T19:25:30",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'fuselage' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-17T19:25:30",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-EB4D21 raised for 1 units, awaiting Approval 2."
+      },
+      {
+        "action": "PROCUREMENT_COMPLETED",
+        "at": "2026-04-18T11:28:36",
+        "by": "abcde (abcde)",
+        "note": "PR PR-EB4D21 approved \u2192 PO PO-F33895 issued. 1 \u00d7 fuselage from Pratt Titanium Supply \u2014 $1150.00, ETA 2d."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1009",
+    "image_path": "uploads/b9ac266d6add.jpg",
+    "component": "airframe nose",
+    "defect": "hail damage",
+    "damaged_area": "nose cone",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged airplane nose section, likely an airframe component, with significant hail damage to the nose cone.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe nose exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe nose' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe nose",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe nose exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcd",
+      "name": "abcd",
+      "role": "operator"
+    },
+    "operator_username": "abcd",
+    "operator_name": "abcd",
+    "operator_label": "abcd",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "airframe nose",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'airframe nose' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T11:05:18"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 airframe nose. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-F4DEBC",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcd (abcd)",
+        "at": "2026-04-18T11:05:18",
+        "note": "Replacement chosen by abcd (abcd) \u00b7 EWM status NONE \u00b7 'airframe nose' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T11:00:03",
+    "updated_at": "2026-04-18T11:05:18",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:00:03",
+        "by": "abcd",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:00:11",
+        "by": "abcd (abcd)",
+        "note": "abcd (abcd) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T11:05:18",
+        "by": "abcd (abcd)",
+        "note": "Replacement chosen by abcd (abcd) \u00b7 EWM status NONE \u00b7 'airframe nose' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T11:05:18",
+        "by": "system (for abcd (abcd))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-F4DEBC raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1010",
+    "image_path": "uploads/d8533e320cb8.jpg",
+    "component": "airframe",
+    "defect": "hail damage",
+    "damaged_area": "nose cone",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged aircraft nose section with visible hail impact damage, indicating a significant structural compromise.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcd",
+      "name": "abcd",
+      "role": "operator"
+    },
+    "operator_username": "abcd",
+    "operator_name": "abcd",
+    "operator_label": "abcd",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "airframe",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'airframe' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T11:13:16"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 airframe. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-1D1532",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:13:16",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T11:12:14",
+    "updated_at": "2026-04-18T11:13:16",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:12:14",
+        "by": "abcd",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:12:27",
+        "by": "abcd (abcd)",
+        "note": "abcd (abcd) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T11:13:16",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T11:13:16",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-1D1532 raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1011",
+    "image_path": "uploads/cbf63046aee1.jpg",
+    "component": "airframe",
+    "defect": "hail damage",
+    "damaged_area": "nose cone",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged aircraft nose section with visible hail impact damage, indicating a significant structural compromise.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcde",
+      "name": "abcde",
+      "role": "supervisor"
+    },
+    "operator_username": "abcde",
+    "operator_name": "abcde",
+    "operator_label": "abcde",
+    "status": "UNDER_REPAIR",
+    "stage": "END",
+    "decision": "REPAIR",
+    "decision_note": null,
+    "initial_mo_id": "MO-9557C4",
+    "repair_mo_id": "MO-9557C4",
+    "required_qty": 1,
+    "ewm_status": null,
+    "ewm_snapshot": null,
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 0,
+    "supplier": null,
+    "supplier_reason": null,
+    "pr_id": null,
+    "pr_status": null,
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPAIR",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:18:32",
+        "note": "Repair approved by abcde (abcde) \u2014 Maintenance Order MO-9557C4 created and UNDER_REPAIR (priority URGENT). \u26a0 Supervisor OVERRIDE: AI recommended REPLACE but supervisor chose REPAIR. Justification: Supervisor chose REPAIR despite the Agent recommending REPLACE.."
+      }
+    ],
+    "created_at": "2026-04-18T11:16:26",
+    "updated_at": "2026-04-18T11:18:32",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:16:26",
+        "by": "abcde",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:16:30",
+        "by": "abcde (abcde)",
+        "note": "abcde (abcde) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPAIR_STARTED",
+        "at": "2026-04-18T11:18:32",
+        "by": "abcde (abcde)",
+        "note": "Repair approved by abcde (abcde) \u2014 Maintenance Order MO-9557C4 created and UNDER_REPAIR (priority URGENT). \u26a0 Supervisor OVERRIDE: AI recommended REPLACE but supervisor chose REPAIR. Justification: Supervisor chose REPAIR despite the Agent recommending REPLACE.."
+      }
+    ],
+    "override": {
+      "ai_recommendation": "REPLACE",
+      "supervisor_decision": "REPAIR",
+      "justification": "Supervisor chose REPAIR despite the Agent recommending REPLACE.",
+      "confirmed_at": "2026-04-18T05:48:27.731Z",
+      "by": "abcde (abcde)"
+    }
+  },
+  {
+    "case_id": "CASE-1012",
+    "image_path": "uploads/11d24c50f5f0.jpg",
+    "component": "airframe",
+    "defect": "hail damage",
+    "damaged_area": "nose section",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a significant portion of an airplane's nose section with extensive hail damage, indicating a high severity level. The damage appears to be recent and substantial.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcde",
+      "name": "abcde",
+      "role": "supervisor"
+    },
+    "operator_username": "abcde",
+    "operator_name": "abcde",
+    "operator_label": "abcde",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "airframe",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'airframe' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T11:19:50"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 airframe. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-375DD0",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:19:50",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T11:19:10",
+    "updated_at": "2026-04-18T11:19:50",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:19:10",
+        "by": "abcde",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:19:12",
+        "by": "abcde (abcde)",
+        "note": "abcde (abcde) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T11:19:50",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T11:19:50",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-375DD0 raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1013",
+    "image_path": "uploads/9c4f9d784f91.jpg",
+    "component": "airframe",
+    "defect": "hail damage",
+    "damaged_area": "nose",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged airplane nose section, likely an airframe component, with significant hail damage observed.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcde",
+      "name": "abcde",
+      "role": "supervisor"
+    },
+    "operator_username": "abcde",
+    "operator_name": "abcde",
+    "operator_label": "abcde",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "airframe",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'airframe' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T11:25:41"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 airframe. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-0FD8A4",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:25:41",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T11:24:25",
+    "updated_at": "2026-04-18T11:25:41",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:24:25",
+        "by": "abcde",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:24:27",
+        "by": "abcde (abcde)",
+        "note": "abcde (abcde) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T11:25:41",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T11:25:41",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-0FD8A4 raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1014",
+    "image_path": "uploads/2302f5a9eedc.jpg",
+    "component": "airframe",
+    "defect": "hail damage",
+    "damaged_area": "nose cone",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged aircraft nose section with visible hail impact damage, likely caused by a severe hailstorm during flight.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcde",
+      "name": "abcde",
+      "role": "supervisor"
+    },
+    "operator_username": "abcde",
+    "operator_name": "abcde",
+    "operator_label": "abcde",
+    "status": "REJECTED",
+    "stage": "END",
+    "decision": "REJECT",
+    "decision_note": "duplicate",
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": null,
+    "ewm_snapshot": null,
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 0,
+    "supplier": null,
+    "supplier_reason": null,
+    "pr_id": null,
+    "pr_status": null,
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REJECT",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:42:16",
+        "note": "duplicate"
+      }
+    ],
+    "created_at": "2026-04-18T11:41:28",
+    "updated_at": "2026-04-18T11:42:16",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:41:28",
+        "by": "abcde",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:41:30",
+        "by": "abcde (abcde)",
+        "note": "abcde (abcde) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REJECTED",
+        "at": "2026-04-18T11:42:16",
+        "by": "abcde (abcde)",
+        "note": "duplicate"
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1015",
+    "image_path": "uploads/7536c84f8624.jpg",
+    "component": "airframe",
+    "defect": "hail damage",
+    "damaged_area": "nose section",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a significant portion of an airplane's nose section with extensive hail damage, indicating a high severity level. The damage appears to be recent and substantial.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcde",
+      "name": "abcde",
+      "role": "supervisor"
+    },
+    "operator_username": "abcde",
+    "operator_name": "abcde",
+    "operator_label": "abcde",
+    "status": "UNDER_REPAIR",
+    "stage": "END",
+    "decision": "REPAIR",
+    "decision_note": null,
+    "initial_mo_id": "MO-91906C",
+    "repair_mo_id": "MO-91906C",
+    "required_qty": 1,
+    "ewm_status": null,
+    "ewm_snapshot": null,
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 0,
+    "supplier": null,
+    "supplier_reason": null,
+    "pr_id": null,
+    "pr_status": null,
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPAIR",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:42:32",
+        "note": "Repair approved by abcde (abcde) \u2014 Maintenance Order MO-91906C created and UNDER_REPAIR (priority URGENT). \u26a0 Supervisor OVERRIDE: AI recommended REPLACE but supervisor chose REPAIR. Justification: Supervisor chose REPAIR despite the Agent recommending REPLACE.."
+      }
+    ],
+    "created_at": "2026-04-18T11:41:45",
+    "updated_at": "2026-04-18T11:42:32",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:41:45",
+        "by": "abcde",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:41:46",
+        "by": "abcde (abcde)",
+        "note": "abcde (abcde) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPAIR_STARTED",
+        "at": "2026-04-18T11:42:32",
+        "by": "abcde (abcde)",
+        "note": "Repair approved by abcde (abcde) \u2014 Maintenance Order MO-91906C created and UNDER_REPAIR (priority URGENT). \u26a0 Supervisor OVERRIDE: AI recommended REPLACE but supervisor chose REPAIR. Justification: Supervisor chose REPAIR despite the Agent recommending REPLACE.."
+      }
+    ],
+    "override": {
+      "ai_recommendation": "REPLACE",
+      "supervisor_decision": "REPAIR",
+      "justification": "Supervisor chose REPAIR despite the Agent recommending REPLACE.",
+      "confirmed_at": "2026-04-18T06:12:25.504Z",
+      "by": "abcde (abcde)"
+    }
+  },
+  {
+    "case_id": "CASE-1016",
+    "image_path": "uploads/a071bd2d56ae.jpg",
+    "component": "airframe nose",
+    "defect": "hail damage",
+    "damaged_area": "nose cone",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged airplane nose section with visible hail impact damage, indicating a significant structural compromise.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe nose exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe nose' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe nose",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe nose exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcde",
+      "name": "abcde",
+      "role": "supervisor"
+    },
+    "operator_username": "abcde",
+    "operator_name": "abcde",
+    "operator_label": "abcde",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "airframe nose",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'airframe nose' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T11:43:08"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 airframe nose. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-75F21E",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:43:08",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe nose' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T11:41:56",
+    "updated_at": "2026-04-18T11:43:08",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:41:56",
+        "by": "abcde",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:41:57",
+        "by": "abcde (abcde)",
+        "note": "abcde (abcde) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T11:43:08",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe nose' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T11:43:08",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-75F21E raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-1017",
+    "image_path": "uploads/383f4ceff91a.jpg",
+    "component": "airframe",
+    "defect": "hail damage",
+    "damaged_area": "nose section",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "equipment_id": "EQ-2201",
+    "ai_report": "The image shows a damaged airplane nose section, likely an airframe component, with significant hail damage observed.",
+    "ai_source": "groq-llama4-scout",
+    "recommendation": {
+      "decision": "REPLACE",
+      "risk_level": "HIGH",
+      "risk_score": 86,
+      "reason": "High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "explanation": [
+        "Severity classified as HIGH (weight=90).",
+        "AI model confidence = 0.90. Confidence amplifies severity signal.",
+        "Component 'airframe' is not on the safety-critical list.",
+        "Composite risk score = 86/100 \u2192 risk level HIGH.",
+        "Final decision: REPLACE (rule \u2192 RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD)."
+      ],
+      "rules_fired": [
+        "RULE_HIGH_SEVERITY_EXCEEDS_REPAIR_THRESHOLD"
+      ],
+      "estimated_downtime": "6-10 hours",
+      "safety_risk": "HIGH",
+      "inputs": {
+        "component": "airframe",
+        "defect": "hail damage",
+        "severity": "HIGH",
+        "confidence": 0.9,
+        "is_safety_critical": false,
+        "unrepairable_pattern_matched": null
+      },
+      "source": "rule_engine"
+    },
+    "ai_validation": {
+      "verdict": "AGREE",
+      "final_decision": "REPLACE",
+      "confidence": 0.86,
+      "reasoning": "Grok API unavailable \u2014 rule-engine decision accepted as-is. Rule basis: High-severity hail damage on airframe exceeds repair threshold; replacement is the lower-risk option.",
+      "source": "fallback"
+    },
+    "operator": {
+      "username": "abcde",
+      "name": "abcde",
+      "role": "supervisor"
+    },
+    "operator_username": "abcde",
+    "operator_name": "abcde",
+    "operator_label": "abcde",
+    "status": "PR_PENDING_APPROVAL",
+    "stage": "APPROVAL_2",
+    "decision": "REPLACE",
+    "decision_note": null,
+    "initial_mo_id": null,
+    "repair_mo_id": null,
+    "required_qty": 1,
+    "ewm_status": "NONE",
+    "ewm_snapshot": {
+      "component": "airframe",
+      "required_qty": 1,
+      "on_hand": 0,
+      "status": "NONE",
+      "location": "N/A",
+      "unit_price": 0,
+      "shortage_qty": 1,
+      "reservable_qty": 0,
+      "message": "'airframe' is not catalogued in EWM \u2014 escalating to procurement.",
+      "checked_at": "2026-04-18T11:43:53"
+    },
+    "reservation_id": null,
+    "reserved_qty": 0,
+    "shortage_qty": 1,
+    "supplier": {
+      "supplier_id": "SUP-002",
+      "name": "Pratt Titanium Supply",
+      "certified": true,
+      "approved": true,
+      "location": "East Hartford, CT, USA",
+      "geo": {
+        "lat": 41.7637,
+        "lng": -72.6128
+      },
+      "distance_km": 15,
+      "rating": "A+",
+      "quality": 9.8,
+      "reliability": 0.98,
+      "on_time_delivery_pct": 99.1,
+      "historical_orders": 2100,
+      "delivery_days": 2,
+      "availability": "IN_STOCK",
+      "stock_level": 85,
+      "components": [
+        "turbine blade",
+        "shaft",
+        "bearing",
+        "disk",
+        "rotor"
+      ],
+      "cost_multiplier": 1.15,
+      "currency": "USD",
+      "contract_type": "STRATEGIC",
+      "last_audit": "2025-09-20",
+      "score": 96.88
+    },
+    "supplier_reason": "Rule-based ranker selected Pratt Titanium Supply (certified) for 1\u00d7 airframe. Quality 9.8/10, lead 2d, 15 km from plant, reliability 0.98. Composite score 96.88/100 across 29 eligible suppliers.",
+    "pr_id": "PR-9F7D43",
+    "pr_status": "PENDING_APPROVAL",
+    "po_id": null,
+    "total_cost": null,
+    "approvals": [
+      {
+        "stage": "APPROVAL_1",
+        "decision": "REPLACE",
+        "by": "abcde (abcde)",
+        "at": "2026-04-18T11:43:53",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      }
+    ],
+    "created_at": "2026-04-18T11:43:40",
+    "updated_at": "2026-04-18T11:43:53",
+    "history": [
+      {
+        "action": "CASE_DRAFTED",
+        "at": "2026-04-18T11:43:40",
+        "by": "abcde",
+        "note": "AI analysis complete \u2014 case drafted, awaiting operator Submit action."
+      },
+      {
+        "action": "CASE_SUBMITTED",
+        "at": "2026-04-18T11:43:42",
+        "by": "abcde (abcde)",
+        "note": "abcde (abcde) submitted the case to Supervisor Inbox for Approval 1."
+      },
+      {
+        "action": "REPLACE_INITIATED",
+        "at": "2026-04-18T11:43:53",
+        "by": "abcde (abcde)",
+        "note": "Replacement chosen by abcde (abcde) \u00b7 EWM status NONE \u00b7 'airframe' is not catalogued in EWM \u2014 escalating to procurement."
+      },
+      {
+        "action": "PR_RAISED",
+        "at": "2026-04-18T11:43:53",
+        "by": "system (for abcde (abcde))",
+        "note": "AI supplier selection \u2192 Pratt Titanium Supply. PR PR-9F7D43 raised for 1 units, awaiting Approval 2."
+      }
+    ]
+  }
+]

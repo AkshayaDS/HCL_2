@@ -1,0 +1,26 @@
+{
+  "BaDtAzvxuPkQNgeev76BEcQ3X2GJ8wByuFsk9o5rqns": {
+    "username": "abcde",
+    "role": "supervisor",
+    "issued_at": "2026-04-18T10:54:52",
+    "expires_at": "2026-04-18T17:24:52.598161+00:00"
+  },
+  "rXlArRr7Nb0gMmkmJglpnmSMvkHRTZCOJL7cOgSvSOU": {
+    "username": "abcdef",
+    "role": "supervisor",
+    "issued_at": "2026-04-18T10:56:40",
+    "expires_at": "2026-04-18T17:26:40.619744+00:00"
+  },
+  "L8WW3kin8gH32FP18HHIn8bpZREvI5wUSjbd_3Mp5Jk": {
+    "username": "abcd",
+    "role": "operator",
+    "issued_at": "2026-04-18T10:59:33",
+    "expires_at": "2026-04-18T17:29:33.337616+00:00"
+  },
+  "jy_ri19EqlrFc77Trq1xD-aYE9dX3Vd2LY2-rmQgAQc": {
+    "username": "abcde",
+    "role": "supervisor",
+    "issued_at": "2026-04-18T11:12:49",
+    "expires_at": "2026-04-18T17:42:49.491477+00:00"
+  }
+}

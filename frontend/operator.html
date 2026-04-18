@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operator · HCL AI Force</title>
+<link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/assets/img/site.webmanifest">
+<meta name="theme-color" content="#006CF8">
+<link rel="stylesheet" href="/assets/style.css?v=19">
+</head>
+<body>
+<header class="app-header"></header>
+
+<section class="container" style="padding-top:28px;">
+  <div class="flex items-center justify-between wrap gap-16" style="margin-bottom:20px;">
+    <div>
+      <div style="font-size:.72rem; color:var(--text-3); letter-spacing:1.6px; text-transform:uppercase;">Operator Console</div>
+      <h2>Image Capture &amp; AI Agent Inspection</h2>
+      <p class="muted" style="margin:6px 0 0;">Capture or upload a component photo. The AI Agent runs automatically and the case is sent to the Supervisor Inbox. A Maintenance Order is raised only after the supervisor approves Repair.</p>
+      <div id="operator-id-strip" style="margin-top:10px;"></div>
+    </div>
+    <div class="flex gap-8">
+      <button id="reset-btn" class="btn btn-ghost" type="button" disabled>↻ New Inspection</button>
+    </div>
+  </div>
+
+  <div class="workflow" style="margin-bottom:22px;">
+    <div class="step active" id="wf-1">1 · Capture</div>
+    <div class="step" id="wf-2">2 · Agent Inspection</div>
+    <div class="step" id="wf-3">3 · Decision Agent</div>
+    <div class="step" id="wf-4">4 · Case Created</div>
+    <div class="step" id="wf-5">5 · Supervisor Inbox</div>
+    <div class="step" id="wf-6">6 · Awaiting Approval</div>
+  </div>
+</section>
+
+<section class="capture-grid">
+  <div class="panel">
+    <div class="panel-head">
+      <h3>CAPTURE</h3>
+      <span class="muted small">Camera or gallery</span>
+    </div>
+    <div class="panel-body">
+      <div class="flex gap-8 wrap" style="margin-bottom:14px;">
+        <button id="btn-camera" type="button" class="btn btn-primary">📷 Open Camera</button>
+        <button id="btn-gallery" type="button" class="btn">🖼 Upload Photo</button>
+        <button id="btn-capture" type="button" class="btn btn-success" style="display:none;">📸 Take Photo</button>
+        <button id="btn-stop-camera" type="button" class="btn btn-ghost" style="display:none;">✕ Close Camera</button>
+      </div>
+
+      <label for="file-input" class="dropzone" id="dropzone">
+        <div class="icon">📥</div>
+        <div><strong>Drag &amp; drop a photo here</strong></div>
+        <div class="hint">or click to browse — JPG / PNG / WEBP</div>
+      </label>
+      <input id="file-input" type="file" accept="image/*" style="display:none;" />
+      <input id="camera-input" type="file" accept="image/*" capture="environment" style="display:none;" />
+
+      <div id="preview-box" class="preview-box">
+        <div class="preview-placeholder" id="preview-placeholder">No image yet — capture or upload to begin</div>
+        <video id="camera-video" autoplay playsinline style="display:none;"></video>
+        <img id="preview-img" alt="Captured component" style="display:none;" />
+        <canvas id="capture-canvas" style="display:none;"></canvas>
+        <div id="overlay-loader" class="overlay-loader" style="display:none;">
+          <div class="spinner"></div>
+          <div id="overlay-text">Running AI Agent inspection…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="results-panel">
+    <div class="panel-head">
+      <h3>RESULT</h3>
+      <span id="result-source" class="muted small"></span>
+    </div>
+    <div class="panel-body" id="results-body">
+      <div class="empty-state">
+        <div class="big">🛩</div>
+        <div>Results appear here once the AI Agent has analysed the image.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="app-footer"></footer>
+
+<script src="/assets/app.js?v=19"></script>
+<script>
+  // Route guard — bounce to /login if not authenticated as an operator.
+  authGuard('operator').then(() => {
+    renderHeader('operator');
+    renderFooter();
+    initOperator();
+  });
+
+  function initOperator() {
+
+  // ── Operator identity strip ──────────────────────────────────────────
+  // Show the authenticated operator's name + employment ID right under
+  // the page heading so it's clear which inspector this case will be
+  // filed against on the Supervisor Inbox.
+  (function showOperatorIdStrip() {
+    const host = document.getElementById('operator-id-strip');
+    if (!host) return;
+    const me = (typeof currentIdentity === 'function') ? currentIdentity() : { username: '', name: '', role: '' };
+    if (!me.username && !me.name) {
+      host.innerHTML = `<span class="muted small">Not signed in — your case will be filed anonymously. <a href="/login?role=operator" style="color:var(--purple-3)">Sign in →</a></span>`;
+      return;
+    }
+    const initials = (me.name || me.username || '?').trim().split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase();
+    const id = me.username && me.username !== me.name ? `<span class="id">· ${esc(me.username)}</span>` : '';
+    host.innerHTML = `
+      <span class="muted small" style="margin-right:8px;">Filing as</span>
+      <span class="operator-chip">
+        <span class="avatar">${esc(initials)}</span>
+        <span>${esc(me.name || me.username)}</span>${id}
+      </span>`;
+  })();
+
+  const $ = (id) => document.getElementById(id);
+  const dropzone = $('dropzone');
+  const fileInput = $('file-input');
+  const cameraInput = $('camera-input');
+  const preview = $('preview-img');
+  const video = $('camera-video');
+  const canvas = $('capture-canvas');
+  const overlay = $('overlay-loader');
+  const overlayText = $('overlay-text');
+  const resultsBody = $('results-body');
+  const resultSource = $('result-source');
+  const resetBtn = $('reset-btn');
+
+  let cameraStream = null;
+  let currentDraftCaseId = null; // Case is created as DRAFT; Submit pushes it to the inbox.
+
+  function setStep(step, state) {
+    const el = document.getElementById('wf-' + step);
+    if (el) el.className = 'step ' + state;
+  }
+  function resetWorkflow() {
+    for (let i = 1; i <= 6; i++) setStep(i, i === 1 ? 'active' : '');
+  }
+
+  function showOverlay(text) {
+    overlayText.textContent = text;
+    overlay.style.display = 'flex';
+  }
+  function hideOverlay() { overlay.style.display = 'none'; }
+
+  function hidePlaceholder() {
+    const p = document.getElementById('preview-placeholder');
+    if (p) p.style.display = 'none';
+  }
+
+  function showPreviewImage(src) {
+    stopCamera();
+    video.style.display = 'none';
+    preview.src = src;
+    preview.style.display = 'block';
+    hidePlaceholder();
+  }
+
+  function startCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast('Camera API unavailable — falling back to mobile upload', 'warn');
+      cameraInput.click();
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        cameraStream = stream;
+        video.srcObject = stream;
+        video.style.display = 'block';
+        preview.style.display = 'none';
+        hidePlaceholder();
+        $('btn-capture').style.display = 'inline-flex';
+        $('btn-stop-camera').style.display = 'inline-flex';
+        $('btn-camera').style.display = 'none';
+      })
+      .catch(() => {
+        toast('Camera blocked — please allow camera access or use upload.', 'error');
+        cameraInput.click();
+      });
+  }
+
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(t => t.stop());
+      cameraStream = null;
+    }
+    video.style.display = 'none';
+    $('btn-capture').style.display = 'none';
+    $('btn-stop-camera').style.display = 'none';
+    $('btn-camera').style.display = 'inline-flex';
+  }
+
+  function capturePhoto() {
+    if (!cameraStream) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      showPreviewImage(URL.createObjectURL(file));
+      stopCamera();
+      submit(file);
+    }, 'image/jpeg', 0.9);
+  }
+
+  async function submit(file) {
+    if (!file) return;
+    setStep(1, 'done'); setStep(2, 'active');
+    showOverlay('Running AI Agent inspection…');
+
+    const fd = new FormData();
+    fd.append('image', file);
+
+    try {
+      const result = await API.createCase(fd);
+      const c = result.case;
+      currentDraftCaseId = c.case_id;
+      // AI + Decision + Case created (as DRAFT) — inbox step NOT yet reached.
+      setStep(2, 'done'); setStep(3, 'done'); setStep(4, 'done');
+      setStep(5, ''); setStep(6, '');
+      renderResult(c, result.maintenance_order);
+      toast(`Case ${c.case_id} drafted — review and click Submit to send to Supervisor`, 'info');
+      resetBtn.disabled = false;
+    } catch (err) {
+      // ── Aircraft-gate rejection: ask user to resubmit inline. ──
+      if (err.status === 422 && err.code === 'not_aircraft_component') {
+        setStep(2, 'fail');
+        const p = err.payload || {};
+        renderNotAircraft(p.message || err.message, p.observed_subject, p.hint);
+        toast('Image rejected — not an aircraft component. Please resubmit.', 'warn');
+        // Re-arm the uploader so the user can immediately try another image.
+        fileInput.value = '';
+        cameraInput.value = '';
+        return;
+      }
+      setStep(2, 'fail');
+      toast(err.message || 'AI Agent inspection failed', 'error');
+      renderError(err.message);
+    } finally {
+      hideOverlay();
+    }
+  }
+
+  function renderNotAircraft(msg, subject, hint) {
+    resultSource.textContent = 'Vision Agent · image rejected';
+    resultsBody.innerHTML = `
+      <div class="banner warn">
+        <strong>Not an aircraft component.</strong><br>
+        ${esc(msg || 'The Vision Agent could not identify this as an aerospace component.')}
+        ${subject ? `<div class="muted small" style="margin-top:6px;">Detected subject: <strong>${esc(subject)}</strong></div>` : ''}
+      </div>
+      <div class="kv" style="margin-top:16px;">
+        <div class="k">What to do</div>
+        <div class="v">${esc(hint || 'Please upload a clear photo of an aircraft, engine, or aerospace component.')}</div>
+      </div>
+      <div class="flex gap-8" style="margin-top:16px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-primary" id="btn-retry-upload">🖼 Resubmit a photo</button>
+        <button type="button" class="btn btn-ghost" id="btn-retry-camera">📷 Use camera</button>
+      </div>
+    `;
+    const rUp = document.getElementById('btn-retry-upload');
+    const rCam = document.getElementById('btn-retry-camera');
+    if (rUp) rUp.addEventListener('click', () => fileInput.click());
+    if (rCam) rCam.addEventListener('click', startCamera);
+  }
+
+  function renderResult(c, mo) {
+    // Present the AI source as a friendly Agent label — never leak raw model
+    // slugs (groq / mock / llama-scout) to the operator console.
+    const agentLabel = c.ai_source
+      ? (String(c.ai_source).toLowerCase() === 'mock' ? 'Vision Agent · offline' : 'Vision Agent · live')
+      : '';
+    resultSource.textContent = agentLabel;
+    const rec = c.recommendation || {};
+    const isDraft = (c.status || '').toUpperCase() === 'DRAFT';
+    const moLine = mo && mo.maintenance_order_id
+      ? `· SAP Maintenance Order <strong>${esc(mo.maintenance_order_id)}</strong> opened at priority <strong>${esc(mo.priority || '—')}</strong>.`
+      : `· No Maintenance Order raised yet — awaiting Supervisor decision.`;
+    const banner = isDraft
+      ? `<div class="banner" style="background:rgba(0,108,248,0.10); border-color:rgba(0,108,248,0.35); color:var(--text-1);">
+           <strong>Case ${esc(c.case_id)}</strong> drafted ${moLine} Review the Agent analysis and click <strong>Submit</strong> to send it to the Supervisor Inbox.
+         </div>`
+      : `<div class="banner success">
+           <strong>Case ${esc(c.case_id)}</strong> filed ${moLine} Awaiting Supervisor review.
+         </div>`;
+
+    resultsBody.innerHTML = `
+      ${banner}
+      <div class="kv" style="margin-top:16px;">
+        <div class="k">Component</div><div class="v">${esc(c.component)}</div>
+        <div class="k">Defect</div><div class="v">${esc(c.defect)}</div>
+        <div class="k">Damaged area</div><div class="v">${esc(c.damaged_area)}</div>
+        <div class="k">Severity</div><div class="v">${fmt.severity(c.severity)}</div>
+        <div class="k">Confidence</div><div class="v">${fmt.pct(c.confidence)}</div>
+        <div class="k">Equipment</div><div class="v">${esc(c.equipment_id)}</div>
+        <div class="k">Agent report</div><div class="v">${esc(c.ai_report || '—')}</div>
+        <div class="k">Recommendation</div><div class="v"><strong>${esc(rec.decision || '—')}</strong> · risk ${esc(rec.risk_level || '—')}<br><span class="muted">${esc(rec.reason || '')}</span></div>
+      </div>
+      ${isDraft ? `
+      <div class="flex gap-8 wrap" style="margin-top:22px; justify-content:flex-end;">
+        <button type="button" class="btn btn-ghost" id="btn-discard-draft">✕ Discard</button>
+        <button type="button" class="btn btn-success" id="btn-submit-inbox" style="padding:10px 22px; font-size:0.95rem;">🚀 Submit to Supervisor</button>
+      </div>` : ''}
+    `;
+
+    if (isDraft) {
+      const submitBtn = document.getElementById('btn-submit-inbox');
+      const discardBtn = document.getElementById('btn-discard-draft');
+      if (submitBtn) submitBtn.addEventListener('click', () => submitToInbox(c.case_id));
+      if (discardBtn) discardBtn.addEventListener('click', resetAll);
+    }
+  }
+
+  async function submitToInbox(caseId) {
+    const btn = document.getElementById('btn-submit-inbox');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+    try {
+      setStep(5, 'active');
+      const result = await API.submitCase(caseId);
+      const updated = result.case || {};
+      setStep(5, 'done'); setStep(6, 'end');
+      // Re-render result panel in "filed" state (removes the Submit button)
+      renderResult(updated, null);
+      toast(`Case ${caseId} sent to Supervisor Inbox ✓`, 'success');
+      currentDraftCaseId = null;
+    } catch (err) {
+      setStep(5, 'fail');
+      toast(err.message || 'Submit failed', 'error');
+      if (btn) { btn.disabled = false; btn.textContent = '🚀 Submit to Supervisor'; }
+    }
+  }
+
+  function renderError(msg) {
+    resultsBody.innerHTML = `<div class="banner error"><strong>Detection failed.</strong><br>${esc(msg || 'Try another image.')}</div>`;
+  }
+
+  function resetAll() {
+    resetWorkflow();
+    preview.style.display = 'none';
+    preview.src = '';
+    stopCamera();
+    resultsBody.innerHTML = `
+      <div class="empty-state">
+        <div class="big">🛩</div>
+        <div>Results appear here once the AI Agent has analysed the image.</div>
+      </div>`;
+    resultSource.textContent = '';
+    fileInput.value = '';
+    cameraInput.value = '';
+    currentDraftCaseId = null;
+    const p = document.getElementById('preview-placeholder');
+    if (p) p.style.display = 'block';
+    resetBtn.disabled = true;
+  }
+
+  $('btn-camera').addEventListener('click', startCamera);
+  $('btn-stop-camera').addEventListener('click', stopCamera);
+  $('btn-capture').addEventListener('click', capturePhoto);
+  $('btn-gallery').addEventListener('click', () => fileInput.click());
+  resetBtn.addEventListener('click', resetAll);
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    const file = e.dataTransfer?.files?.[0];
+    if (file) { showPreviewImage(URL.createObjectURL(file)); submit(file); }
+  });
+
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (file) { showPreviewImage(URL.createObjectURL(file)); submit(file); }
+  });
+  cameraInput.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (file) { showPreviewImage(URL.createObjectURL(file)); submit(file); }
+  });
+
+  window.addEventListener('beforeunload', stopCamera);
+  }
+</script>
+</body>
+</html>

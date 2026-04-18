@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCL AI Force · Intelligent Maintenance Platform</title>
+<link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/assets/img/site.webmanifest">
+<meta name="theme-color" content="#006CF8">
+<link rel="stylesheet" href="/assets/style.css?v=19">
+<style>
+  /* Hide the landing chrome for the first ~300ms so we can redirect
+     signed-in visitors to their role page without a flash of the
+     wrong content. The script below adds body.auth-ready once it's
+     confirmed the user is a guest. */
+  body.auth-pending > header,
+  body.auth-pending > section,
+  body.auth-pending > footer { visibility: hidden; }
+  body.auth-pending::after {
+    content: "";
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg-0);
+  }
+</style>
+</head>
+<body class="auth-pending">
+<header class="app-header"></header>
+
+<section class="hero">
+  <div class="tagline">HCL Technologies · AI Force Platform</div>
+  <h1>Image to <span class="accent">Action</span>.<br>Engine to <span class="accent">SAP</span>.</h1>
+  <p>
+    An agentic AI platform for SAP Maintenance &amp; Procurement in aviation MRO.
+    Every photo becomes a maintenance order, every decision runs the exact
+    EWM + Supplier + PR + PO workflow — with two-stage supervisor approval.
+  </p>
+  <div class="flex gap-12" style="justify-content:center; flex-wrap:wrap;">
+    <a href="/login?role=operator" class="btn btn-primary btn-lg">Operator · Start Inspection →</a>
+    <a href="/login?role=supervisor" class="btn btn-ghost btn-lg">Supervisor · Open Console</a>
+  </div>
+</section>
+
+<section class="role-grid">
+  <a href="/login?role=operator" class="role-card">
+    <div class="role-icon">📷</div>
+    <h3>Operator · Inspector</h3>
+    <p>Capture or upload a component image. The AI Agent runs automatically and files the case for supervisor review. No decision buttons, no inbox — capture only.</p>
+    <div class="go">Launch scanner →</div>
+  </a>
+  <a href="/login?role=supervisor" class="role-card">
+    <div class="role-icon">🛡</div>
+    <h3>Supervisor</h3>
+    <p>Two-stage approval console. Approval 1: Reject / Resubmit / Repair / Replace. Approval 2: approve the Purchase Requisition to auto-issue the PO.</p>
+    <div class="go">Open console →</div>
+  </a>
+</section>
+
+<footer class="app-footer"></footer>
+
+<script src="/assets/app.js?v=19"></script>
+<script>
+  // If the visitor is already signed in, skip the landing page entirely
+  // and drop them directly into their role page. The landing (hero + role
+  // cards) is only for first-time visitors choosing which portal to open.
+  (async function routeByRole() {
+    function revealAsGuest() {
+      document.body.classList.remove('auth-pending');
+      renderHeader('home');
+      renderFooter();
+    }
+    const tok = (typeof authToken === 'function') ? authToken() : '';
+    if (!tok) { revealAsGuest(); return; }
+    try {
+      const res = await fetch('/api/auth/me', { headers: authHeaders() });
+      if (!res.ok) { revealAsGuest(); return; }
+      const { user } = await res.json();
+      const role = (user && user.role || '').toLowerCase();
+      if (role === 'operator')   { window.location.replace('/operator'); return; }
+      if (role === 'supervisor') { window.location.replace('/supervisor'); return; }
+      revealAsGuest();
+    } catch { revealAsGuest(); }
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+[
+  {
+    "maintenance_order_id": "MO-E5FA8D",
+    "notification_id": "MN-4D3F87",
+    "case_id": "CASE-1002",
+    "equipment_id": "EQ-3310",
+    "component": "fuselage",
+    "defect": "extensive damage",
+    "severity": "HIGH",
+    "issue": "The image appears to show a severely damaged airplane, likely after a crash, with extensive structural damage to the fuselage and wings.",
+    "priority": "URGENT",
+    "status": "UNDER_REPAIR",
+    "assigned_to": "Maintenance Crew A",
+    "created_at": "2026-04-17T00:50:22",
+    "updated_at": "2026-04-17T00:50:22"
+  },
+  {
+    "maintenance_order_id": "MO-4B3CDD",
+    "notification_id": "MN-4340E8",
+    "case_id": "CASE-1005",
+    "equipment_id": "EQ-3310",
+    "component": "airframe",
+    "defect": "severe burn damage",
+    "severity": "HIGH",
+    "issue": "The image shows a white airplane with significant burn damage along the fuselage and wings, indicating a severe incident. The damage suggests a high severity level.",
+    "priority": "URGENT",
+    "status": "UNDER_REPAIR",
+    "assigned_to": "Maintenance Crew A",
+    "created_at": "2026-04-17T20:29:31",
+    "updated_at": "2026-04-17T20:29:31"
+  },
+  {
+    "maintenance_order_id": "MO-9557C4",
+    "notification_id": "MN-9156C4",
+    "case_id": "CASE-1011",
+    "equipment_id": "EQ-2201",
+    "component": "airframe",
+    "defect": "hail damage",
+    "severity": "HIGH",
+    "issue": "The image shows a damaged aircraft nose section with visible hail impact damage, indicating a significant structural compromise.",
+    "priority": "URGENT",
+    "status": "UNDER_REPAIR",
+    "assigned_to": "Maintenance Crew A",
+    "created_at": "2026-04-18T11:18:32",
+    "updated_at": "2026-04-18T11:18:32"
+  },
+  {
+    "maintenance_order_id": "MO-91906C",
+    "notification_id": "MN-A5E231",
+    "case_id": "CASE-1015",
+    "equipment_id": "EQ-2201",
+    "component": "airframe",
+    "defect": "hail damage",
+    "severity": "HIGH",
+    "issue": "The image shows a significant portion of an airplane's nose section with extensive hail damage, indicating a high severity level. The damage appears to be recent and substantial.",
+    "priority": "URGENT",
+    "status": "UNDER_REPAIR",
+    "assigned_to": "Maintenance Crew A",
+    "created_at": "2026-04-18T11:42:32",
+    "updated_at": "2026-04-18T11:42:32"
+  }
+]

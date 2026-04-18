@@ -1,0 +1,17 @@
+{
+  "turbine blade": {"quantity": 6, "location": "Warehouse A-12", "unit_price": 4500},
+  "compressor blade": {"quantity": 2, "location": "Warehouse A-15", "unit_price": 3800},
+  "fan blade": {"quantity": 0, "location": "Warehouse A-09", "unit_price": 5200},
+  "bearing": {"quantity": 18, "location": "Warehouse B-03", "unit_price": 420},
+  "shaft": {"quantity": 1, "location": "Warehouse B-07", "unit_price": 6800},
+  "disk": {"quantity": 0, "location": "Warehouse B-10", "unit_price": 9200},
+  "rotor": {"quantity": 2, "location": "Warehouse B-11", "unit_price": 11500},
+  "combustor": {"quantity": 3, "location": "Warehouse C-02", "unit_price": 15000},
+  "nozzle": {"quantity": 4, "location": "Warehouse C-04", "unit_price": 7600},
+  "bolt": {"quantity": 240, "location": "Warehouse D-01", "unit_price": 12},
+  "fastener": {"quantity": 180, "location": "Warehouse D-02", "unit_price": 18},
+  "bracket": {"quantity": 22, "location": "Warehouse D-05", "unit_price": 95},
+  "seal": {"quantity": 45, "location": "Warehouse D-08", "unit_price": 65},
+  "casing": {"quantity": 1, "location": "Warehouse E-01", "unit_price": 18500},
+  "housing": {"quantity": 2, "location": "Warehouse E-02", "unit_price": 8900}
+}

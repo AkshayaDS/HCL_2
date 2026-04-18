@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supervisor · HCL AI Force</title>
+<link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/assets/img/site.webmanifest">
+<meta name="theme-color" content="#006CF8">
+<link rel="stylesheet" href="/assets/style.css?v=19">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+<header class="app-header"></header>
+
+<section class="container" style="padding-top:24px;">
+  <div class="flex items-center justify-between wrap gap-16" style="margin-bottom:14px;">
+    <div>
+      <div style="font-size:.72rem; color:var(--text-3); letter-spacing:1.6px; text-transform:uppercase;">Supervisor Console</div>
+      <h2>Approvals · Maintenance · Procurement</h2>
+    </div>
+    <button class="btn btn-ghost" onclick="window.Supervisor.refreshAll()">↻ Refresh</button>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="inbox">Approval 1 <span class="count" id="count-inbox">0</span></div>
+    <div class="tab" data-tab="approval2">PO Queue <span class="count" id="count-pr">0</span></div>
+    <div class="tab" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="maintenance"> Maintenance Orders</div>
+    <div class="tab" data-tab="procurement"> Procurement</div>
+  </div>
+
+  <!-- ═══ Approval 1 — Inbox ══════════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-inbox">
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-body">
+        <div class="filter-bar">
+          <span class="muted small" style="margin-right:6px;">Filter:</span>
+          <div class="chip active" data-filter="UNREAD">Unread (NEW)</div>
+          <div class="chip" data-filter="IN_PROGRESS">In Progress</div>
+          <div class="chip" data-filter="COMPLETED">Completed</div>
+          <div class="chip" data-filter="ALL">All</div>
+          <div style="flex:1"></div>
+          <span class="muted small" id="inbox-count">—</span>
+        </div>
+        <div id="case-list" class="case-list">
+          <div class="empty-state"><div class="big">📭</div><div>No cases yet.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Approval 2 — PO queue ═════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-approval2">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>PURCHASE ORDERS · AWAITING APPROVAL</h3>
+      </div>
+      <div class="panel-body">
+        <div id="pr-list">
+          <div class="empty-state"><div class="big">✅</div><div>No POs pending — approvals are caught up.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Dashboard ═════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-dashboard">
+    <div class="stat-grid" style="margin-bottom:18px;">
+      <div class="stat-card">          <div class="stat-label">Total cases</div>   <div class="stat-value" id="st-total">0</div>   <div class="stat-hint" id="st-new">0 new</div></div>
+      <div class="stat-card orange">   <div class="stat-label">Under repair</div>  <div class="stat-value" id="st-repair">0</div> <div class="stat-hint">SAP PM orders</div></div>
+      <div class="stat-card purple">   <div class="stat-label">Procurement</div>   <div class="stat-value" id="st-proc">0</div>   <div class="stat-hint" id="st-pr">0 PRs pending</div></div>
+      <div class="stat-card green">    <div class="stat-label">Total spend</div>   <div class="stat-value" id="st-spend">$0</div> <div class="stat-hint">Issued POs</div></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:14px; margin-bottom:18px;">
+      <div class="panel"><div class="panel-head"><h3>DEFECT DISTRIBUTION</h3></div><div class="panel-body"><canvas id="chart-defects" height="200"></canvas></div></div>
+      <div class="panel"><div class="panel-head"><h3>REPAIR vs REPLACE</h3></div><div class="panel-body"><canvas id="chart-decisions" height="200"></canvas></div></div>
+      <div class="panel"><div class="panel-head"><h3>SEVERITY SPLIT</h3></div><div class="panel-body"><canvas id="chart-severity" height="200"></canvas></div></div>
+      <div class="panel"><div class="panel-head"><h3>EWM OUTCOMES</h3></div><div class="panel-body"><canvas id="chart-ewm" height="200"></canvas></div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head" style="justify-content: space-between;">
+        <h3>CASE LEDGER · FULL LIFECYCLE</h3>
+        <button id="btn-generate-report" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem;">📄 Download Report</button>
+      </div>
+      <div class="panel-body" style="overflow:auto;">
+        <table class="table" id="ledger">
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Photo</th>
+              <th>Operator</th>
+              <th>Component · Defect</th>
+              <th>Severity</th>
+              <th>Decision</th>
+              <th>EWM</th>
+              <th>Reservation</th>
+              <th>Supplier</th>
+              <th>PR</th>
+              <th>PO</th>
+              <th>Status</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Maintenance Orders ════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-maintenance">
+    <div class="panel">
+      <div class="panel-head"><h3>SAP MAINTENANCE ORDERS</h3></div>
+      <div class="panel-body" style="overflow:auto;">
+        <table class="table" id="mo-table">
+          <thead><tr><th>MO</th><th>Case</th><th>Equipment</th><th>Component</th><th>Severity</th><th>Priority</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Procurement ═══════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-procurement">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-bottom:14px;" class="wrap">
+      <div class="panel">
+        <div class="panel-head"><h3>RESERVATIONS</h3></div>
+        <div class="panel-body" style="overflow:auto;">
+          <table class="table" id="res-table"><thead><tr><th>RES</th><th>Case</th><th>Component</th><th>Qty</th><th>Location</th><th>Status</th><th>Created</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>PURCHASE ORDERS</h3></div>
+        <div class="panel-body" style="overflow:auto;">
+          <table class="table" id="po-table"><thead><tr><th>PO</th><th>Case</th><th>Supplier</th><th>Qty</th><th>Total</th><th>ETA</th><th>Created</th><th>Invoice</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>LIVE INVENTORY</h3></div>
+      <div class="panel-body" style="overflow:auto;">
+        <table class="table" id="inv-table"><thead><tr><th>Component</th><th>On hand</th><th>Location</th><th>Unit price</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-head"><h3>CERTIFIED SUPPLIER NETWORK</h3></div>
+      <div class="panel-body" style="overflow:auto;">
+        <table class="table" id="sup-table"><thead><tr><th>Supplier</th><th>Certified</th><th>Location</th><th>Distance</th><th>Lead</th><th>Quality</th><th>Components</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="modal-host"></div>
+<footer class="app-footer"></footer>
+
+<script src="/assets/app.js?v=19"></script>
+<script>
+  // Route guard — bounce to /login if not authenticated as a supervisor.
+  authGuard('supervisor').then(() => {
+    renderHeader('supervisor');
+    renderFooter();
+    initSupervisor();
+  });
+
+  function initSupervisor() {
+
+  /* ═════════ TAB SWITCH ═════════ */
+  document.querySelectorAll('#tabs .tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('#tabs .tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ═════════ FILTER CHIPS ═════════ */
+  let inboxFilter = 'UNREAD';
+  document.querySelectorAll('.filter-bar .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.filter-bar .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      inboxFilter = c.dataset.filter;
+      renderInbox();
+    });
+  });
+
+  /* ═════════ OPERATOR DISPLAY HELPERS ═════════ */
+  function operatorDisplay(c) {
+    if (!c) return 'Unknown operator';
+    const op = c.operator || {};
+    const name = (op.name || c.operator_name || '').trim();
+    const user = (op.username || c.operator_username || '').trim();
+    if (name && user && name !== user) return `${name} (${user})`;
+    return name || user || (c.operator_label || 'Unknown operator');
+  }
+  function operatorInitials(c) {
+    const display = operatorDisplay(c);
+    const parts = String(display).replace(/\(.*\)/, '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  function operatorChip(c) {
+    if (!c) return '';
+    const op = c.operator || {};
+    const name = (op.name || c.operator_name || '').trim();
+    const user = (op.username || c.operator_username || '').trim();
+    if (!name && !user) return '';
+    const label = name || user || 'operator';
+    const idLabel = (user && user !== name) ? `<span class="id">· ${esc(user)}</span>` : '';
+    return `<span class="operator-chip" title="Submitted by ${esc(operatorDisplay(c))}">
+              <span class="avatar">${esc(operatorInitials(c))}</span>
+              <span>${esc(label)}</span>${idLabel}
+            </span>`;
+  }
+
+  /* ═════════ STATE ═════════ */
+  let allCases = [];
+  let allPOs = [];
+  let allMOs = [];
+  let allRes = [];
+  let allInv = {};
+  let allSups = [];
+  let allPRs = [];
+  let lastStats = {};
+  let charts = {};
+
+  /* ═════════ REFRESH ═════════ */
+  async function refreshAll() {
+    try {
+      const [cases, stats, mos, res, pos, inv, sups, prs] = await Promise.all([
+        API.listCases(),
+        API.stats(),
+        API.maintenanceOrders(),
+        API.reservations(),
+        API.purchaseOrders(),
+        API.inventory(),
+        API.suppliers(),
+        API.purchaseRequisitions('PENDING_APPROVAL'),
+      ]);
+      allCases = cases;
+      allPOs = pos || [];
+      allMOs = mos || [];
+      allRes = res || [];
+      allInv = inv || {};
+      allSups = sups || [];
+      allPRs = prs || [];
+      lastStats = stats || {};
+      // Expose to window so the floating AI assistant can see the
+      // currently-loaded cases + dashboard snapshot when the supervisor
+      // asks a question about what's on screen.
+      window.allCases = allCases;
+      window.lastStats = lastStats;
+      window.allMOs = allMOs;
+      window.allPOs = allPOs;
+      window.allPRs = allPRs;
+      renderInbox();
+      renderDashboard(cases, stats);
+      renderMO(mos);
+      renderRes(res);
+      renderPO(pos);
+      renderInventory(inv);
+      renderSuppliers(sups);
+      renderPRQueue(prs);
+      document.getElementById('count-inbox').textContent = cases.filter(c => c.status === 'NEW').length;
+      document.getElementById('count-pr').textContent = prs.length;
+    } catch (e) {
+      toast('Refresh failed: ' + e.message, 'error');
+    }
+  }
+  window.Supervisor = { refreshAll };
+
+  /* ═════════ INBOX ═════════ */
+  function filterCases(filter) {
+    // Always exclude DRAFT cases — those are in-progress operator inspections
+    // that haven't been submitted to the Supervisor yet.
+    const visible = allCases.filter(c => (c.status || '').toUpperCase() !== 'DRAFT');
+    if (filter === 'UNREAD')       return visible.filter(c => c.status === 'NEW');
+    if (filter === 'IN_PROGRESS')  return visible.filter(c => c.status === 'PR_PENDING_APPROVAL');
+    if (filter === 'COMPLETED')    return visible.filter(c => ['UNDER_REPAIR','RESERVED','PROCUREMENT_COMPLETED','REJECTED','RESUBMIT','PR_REJECTED'].includes(c.status));
+    return visible;
+  }
+
+  function renderInbox() {
+    const list = filterCases(inboxFilter);
+    const host = document.getElementById('case-list');
+    document.getElementById('inbox-count').textContent = `${list.length} case${list.length === 1 ? '' : 's'}`;
+    if (!list.length) {
+      host.innerHTML = `<div class="empty-state"><div class="big">📭</div><div>No cases match this filter.</div></div>`;
+      return;
+    }
+    host.innerHTML = list.map(c => `
+      <div class="case-row ${c.status === 'NEW' ? 'unread' : ''}" data-case="${esc(c.case_id)}">
+        <div class="case-thumb">${c.image_path ? `<img src="/${esc(c.image_path)}" alt="">` : '🛩'}</div>
+        <div class="case-body">
+          <div class="row-top">
+            <h4>${esc(c.case_id)} · ${esc(c.component || '—')}</h4>
+            ${fmt.severity(c.severity)}
+            ${fmt.status(c.status)}
+            ${operatorChip(c)}
+          </div>
+          <div class="meta">${esc(c.defect || '')} · ${esc(c.damaged_area || '')} · Equipment ${esc(c.equipment_id || '—')}</div>
+          <div class="meta">Filed by <strong>${esc(operatorDisplay(c))}</strong> · ${fmt.dateTime(c.created_at)} · Updated ${fmt.dateTime(c.updated_at)}</div>
+        </div>
+        <div class="flex gap-8"><button class="btn btn-sm btn-primary">Open →</button></div>
+      </div>
+    `).join('');
+    host.querySelectorAll('.case-row').forEach(r => {
+      r.addEventListener('click', () => openCase(r.dataset.case));
+    });
+  }
+
+  /* ═════════ DASHBOARD ═════════ */
+  function renderDashboard(cases, stats) {
+    document.getElementById('st-total').textContent = stats.total_cases;
+    document.getElementById('st-new').textContent = `${(stats.status_counts || {}).NEW || 0} NEW · ${(stats.status_counts || {}).REJECTED || 0} rejected`;
+    document.getElementById('st-repair').textContent = stats.maintenance_orders;
+    document.getElementById('st-proc').textContent = stats.purchase_orders;
+    document.getElementById('st-pr').textContent = `${stats.purchase_requisitions} PRs total`;
+    document.getElementById('st-spend').textContent = fmt.money(stats.total_procurement_spend);
+
+    // Chart palette — royal-blue HCL scale (h=262°) matching the theme.
+    const PURPLE_PALETTE = ['#006CF8', '#0084FF', '#00ABFF', '#96D4FF', '#FBBF24', '#F87171', '#34D399'];
+    const DECISION_PALETTE = ['#006CF8', '#0084FF', '#F87171', '#FBBF24'];
+    const SEVERITY_PALETTE = ['#34D399', '#FBBF24', '#F87171'];
+    const EWM_PALETTE = ['#34D399', '#FBBF24', '#F87171'];
+
+    renderChart('chart-defects', 'bar', Object.keys(stats.defect_counts || {}), Object.values(stats.defect_counts || {}), PURPLE_PALETTE);
+    renderChart('chart-decisions', 'doughnut', Object.keys(stats.decision_counts || {}), Object.values(stats.decision_counts || {}), DECISION_PALETTE);
+    renderChart('chart-severity', 'doughnut', Object.keys(stats.severity_counts || {}), Object.values(stats.severity_counts || {}), SEVERITY_PALETTE);
+    renderChart('chart-ewm', 'bar', Object.keys(stats.ewm_counts || {}), Object.values(stats.ewm_counts || {}), EWM_PALETTE);
+
+    const tbody = document.querySelector('#ledger tbody');
+    tbody.innerHTML = cases.map(c => `
+      <tr data-case="${esc(c.case_id)}">
+        <td><strong>${esc(c.case_id)}</strong></td>
+        <td>${c.image_path ? `<img src="/${esc(c.image_path)}" style="width:48px; height:36px; object-fit:cover; border-radius:6px; border:1px solid var(--border);">` : '—'}</td>
+        <td>${operatorChip(c) || '<span class="muted small">—</span>'}</td>
+        <td>${esc(c.component || '—')} · ${esc(c.defect || '—')}</td>
+        <td>${fmt.severity(c.severity)}</td>
+        <td>${esc(c.decision || '—')}</td>
+        <td>${c.ewm_status ? fmt.ewmPill(c.ewm_status) : '—'}</td>
+        <td>${esc(c.reservation_id || '—')} ${c.reserved_qty ? `<span class="muted small">(${c.reserved_qty})</span>` : ''}</td>
+        <td>${esc(c.supplier?.name || '—')}</td>
+        <td>${esc(c.pr_id || '—')} ${c.pr_status ? `<span class="muted small">${esc(c.pr_status)}</span>`:''}</td>
+        <td>${esc(c.po_id || '—')} ${c.total_cost != null ? `<span class="muted small">${fmt.money(c.total_cost)}</span>`:''}</td>
+        <td>${fmt.status(c.status)}</td>
+        <td class="small muted">${fmt.dateTime(c.updated_at)}</td>
+      </tr>`).join('');
+    tbody.querySelectorAll('tr').forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.case)));
+  }
+
+  function renderChart(id, type, labels, data, colors) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(el, {
+      type,
+      data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
+      options: {
+        plugins: { legend: { labels: { color: '#C9C9D6', font: { size: 11 } } } },
+        scales: type === 'bar' ? {
+          x: { ticks: { color: '#B0B0B0', font: { size: 10 } }, grid: { color: 'rgba(0, 132, 255, 0.10)' } },
+          y: { ticks: { color: '#B0B0B0', font: { size: 10 } }, grid: { color: 'rgba(0, 132, 255, 0.10)' }, beginAtZero: true }
+        } : {},
+        responsive: true, maintainAspectRatio: false,
+      }
+    });
+  }
+
+  /* ═════════ OTHER TABLES ═════════ */
+  function renderMO(mos) {
+    const tb = document.querySelector('#mo-table tbody');
+    tb.innerHTML = (mos || []).map(m => `
+      <tr>
+        <td><strong>${esc(m.maintenance_order_id)}</strong></td>
+        <td>${esc(m.case_id)}</td>
+        <td>${esc(m.equipment_id)}</td>
+        <td>${esc(m.component)}</td>
+        <td>${fmt.severity(m.severity)}</td>
+        <td>${esc(m.priority)}</td>
+        <td>${fmt.status(m.status)}</td>
+        <td class="small muted">${fmt.dateTime(m.created_at)}</td>
+      </tr>`).join('') || `<tr><td colspan="8" class="text-center muted">No maintenance orders yet.</td></tr>`;
+  }
+
+  function renderRes(rows) {
+    const tb = document.querySelector('#res-table tbody');
+    tb.innerHTML = (rows || []).map(r => `
+      <tr>
+        <td><strong>${esc(r.reservation_id)}</strong></td>
+        <td>${esc(r.case_id)}</td>
+        <td>${esc(r.component)}</td>
+        <td>${r.quantity}</td>
+        <td>${esc(r.location)}</td>
+        <td>${fmt.status(r.status)}</td>
+        <td class="small muted">${fmt.dateTime(r.created_at)}</td>
+      </tr>`).join('') || `<tr><td colspan="7" class="text-center muted">No reservations yet.</td></tr>`;
+  }
+
+  function renderPO(pos) {
+    const tb = document.querySelector('#po-table tbody');
+    tb.innerHTML = (pos || []).map(p => `
+      <tr>
+        <td><strong>${esc(p.po_id)}</strong></td>
+        <td>${esc(p.case_id)}</td>
+        <td>${esc(p.supplier_name)}</td>
+        <td>${p.quantity}</td>
+        <td>${fmt.money(p.total_cost)}</td>
+        <td>${p.expected_delivery_days}d</td>
+        <td class="small muted">${fmt.dateTime(p.created_at)}</td>
+        <td><button class="btn btn-sm btn-primary" data-invoice="${esc(p.po_id)}">📥 PDF</button></td>
+      </tr>`).join('') || `<tr><td colspan="8" class="text-center muted">No purchase orders yet.</td></tr>`;
+    tb.querySelectorAll('[data-invoice]').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        downloadInvoicePDF(b.dataset.invoice);
+      });
+    });
+  }
+
+  function renderInventory(inv) {
+    const tb = document.querySelector('#inv-table tbody');
+    tb.innerHTML = Object.entries(inv || {}).map(([k, v]) => `
+      <tr>
+        <td><strong>${esc(k)}</strong></td>
+        <td>${v.quantity}</td>
+        <td>${esc(v.location)}</td>
+        <td>${fmt.money(v.unit_price)}</td>
+      </tr>`).join('');
+  }
+
+  function renderSuppliers(sups) {
+    const tb = document.querySelector('#sup-table tbody');
+    tb.innerHTML = (sups || []).map(s => `
+      <tr>
+        <td><strong>${esc(s.name)}</strong><br><span class="muted small">${esc(s.supplier_id)}</span></td>
+        <td>${s.certified ? '<span class="badge badge-low">✓ Certified</span>' : '<span class="badge badge-high">Non-certified</span>'}</td>
+        <td>${esc(s.location)}</td>
+        <td>${s.distance_km} km</td>
+        <td>${s.delivery_days}d</td>
+        <td>${s.quality}/10</td>
+        <td class="small muted">${(s.components || []).map(esc).join(', ')}</td>
+      </tr>`).join('');
+  }
+
+  /* ═════════ APPROVAL 2 · PO QUEUE ═════════
+   * Each row represents a *pending* Purchase Order — the PR is its draft
+   * and approving issues the PO immediately. We render supplier + total
+   * cost estimate so the supervisor sees the full commercial commitment. */
+  function renderPRQueue(prs) {
+    const host = document.getElementById('pr-list');
+    if (!prs || !prs.length) {
+      host.innerHTML = `<div class="empty-state"><div class="big">✅</div><div>No POs pending — approvals are caught up.</div></div>`;
+      return;
+    }
+    host.innerHTML = `<table class="table">
+      <thead><tr><th>Draft PO</th><th>Case</th><th>Component</th><th>Qty</th><th>Supplier</th><th>Est. Total</th><th>Created</th><th></th></tr></thead>
+      <tbody>
+      ${prs.map(pr => {
+        const caseRow = (allCases || []).find(c => c.case_id === pr.case_id) || {};
+        const unit = Number((caseRow.supplier && caseRow.supplier.unit_price)
+          || (caseRow.ewm_snapshot && caseRow.ewm_snapshot.unit_price)
+          || pr.unit_price || 1000);
+        const estTotal = unit * (Number(pr.quantity) || 0);
+        return `
+        <tr>
+          <td><strong>${esc(pr.pr_id)}</strong><div class="muted small">Pending PO</div></td>
+          <td>${esc(pr.case_id)}</td>
+          <td>${esc(pr.component)}</td>
+          <td>${pr.quantity}</td>
+          <td>${esc(pr.supplier_name)}</td>
+          <td>${fmt.money(estTotal)}</td>
+          <td class="small muted">${fmt.dateTime(pr.created_at)}</td>
+          <td class="flex gap-8">
+            <button class="btn btn-sm btn-primary" data-open="${esc(pr.case_id)}">Open case</button>
+            <button class="btn btn-sm btn-success" data-approve="${esc(pr.case_id)}">Approve PO</button>
+            <button class="btn btn-sm btn-danger"  data-reject="${esc(pr.case_id)}">Reject</button>
+          </td>
+        </tr>`;
+      }).join('')}
+      </tbody></table>`;
+    host.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openCase(b.dataset.open); }));
+    host.querySelectorAll('[data-approve]').forEach(b => b.addEventListener('click', async e => {
+      e.stopPropagation();
+      const caseId = b.dataset.approve;
+      const pr = (allPRs || []).find(p => p.case_id === caseId) || {};
+      const caseRow = (allCases || []).find(c => c.case_id === caseId) || {};
+      const unit = Number((caseRow.supplier && caseRow.supplier.unit_price)
+        || (caseRow.ewm_snapshot && caseRow.ewm_snapshot.unit_price)
+        || pr.unit_price || 1000);
+      const estTotal = unit * (Number(pr.quantity) || 0);
+      const ok = await ui.confirm({
+        title: 'Approve Purchase Order?',
+        message: `This will issue PO to ${esc(pr.supplier_name || 'the selected supplier')} immediately. This action cannot be undone.`,
+        tone: 'success',
+        icon: '✓',
+        confirmLabel: 'Yes, issue PO',
+        details: [
+          { label: 'Case',        value: caseId },
+          { label: 'PR ID',       value: pr.pr_id || '—' },
+          { label: 'Component',   value: pr.component || '—' },
+          { label: 'Quantity',    value: String(pr.quantity || '—') },
+          { label: 'Supplier',    value: pr.supplier_name || '—' },
+          { label: 'Est. total',  value: fmt.money(estTotal) },
+        ],
+      });
+      if (!ok) return;
+      try {
+        const resp = await API.approvePR(caseId);
+        await refreshAll();
+        const po = (resp && resp.po) || {};
+        const prOut = (resp && resp.pr) || pr;
+        const caseOut = (resp && resp.case) || caseRow;
+        await ui.result({
+          title: 'Purchase Order Issued',
+          message: 'PR approved — PO auto-issued to the selected supplier.',
+          icon: '📦',
+          details: [
+            { label: 'Case',        value: caseId },
+            { label: 'PR ID',       value: prOut.pr_id || '—' },
+            { label: 'PO ID',       value: po.po_id || '—' },
+            { label: 'Component',   value: prOut.component || caseOut.component || '—' },
+            { label: 'Quantity',    value: String(po.quantity || prOut.quantity || '—') },
+            { label: 'Supplier',    value: po.supplier_name || prOut.supplier_name || '—' },
+            { label: 'Total cost',  value: fmt.money(po.total_cost || estTotal) },
+            { label: 'ETA',         value: (po.expected_delivery_days != null ? `${po.expected_delivery_days} days` : '—') },
+            { label: 'Status',      value: (caseOut.status || 'PROCUREMENT_COMPLETED').replace(/_/g, ' ') },
+          ],
+        });
+      } catch (err) {
+        await ui.alert({ title: 'Approve PO failed', message: err.message, tone: 'danger', icon: '✕' });
+      }
+    }));
+    host.querySelectorAll('[data-reject]').forEach(b => b.addEventListener('click', async e => {
+      e.stopPropagation();
+      const caseId = b.dataset.reject;
+      const pr = (allPRs || []).find(p => p.case_id === caseId) || {};
+      const note = await ui.prompt({
+        title: 'Reject Purchase Order',
+        message: `Reason will be recorded against PR ${esc(pr.pr_id || '—')}.`,
+        placeholder: 'e.g. Out of budget cycle / alt supplier preferred / spec mismatch',
+        required: true,
+        multiline: true,
+        tone: 'danger',
+        icon: '✕',
+        confirmLabel: 'Reject PO',
+      });
+      if (note === null) return;
+      try {
+        await API.rejectPR(caseId, note);
+        await refreshAll();
+        await ui.result({
+          title: 'Purchase Order Rejected',
+          message: 'PR/PO rejected — reason logged on the audit trail.',
+          tone: 'danger',
+          icon: '✕',
+          details: [
+            { label: 'Case',      value: caseId },
+            { label: 'PR ID',     value: pr.pr_id || '—' },
+            { label: 'Component', value: pr.component || '—' },
+            { label: 'Quantity',  value: String(pr.quantity || '—') },
+            { label: 'Supplier',  value: pr.supplier_name || '—' },
+            { label: 'Reason',    value: note },
+          ],
+        });
+      } catch (err) {
+        await ui.alert({ title: 'Reject PO failed', message: err.message, tone: 'danger', icon: '✕' });
+      }
+    }));
+  }
+
+  /* ═════════ CASE DETAIL MODAL ═════════ */
+  async function openCase(caseId) {
+    try {
+      const c = await API.getCase(caseId);
+      showModal(c);
+    } catch (err) { toast('Could not load case: ' + err.message, 'error'); }
+  }
+
+  function workflowHTML(c) {
+    const steps = workflowForCase(c);
+    return `<div class="workflow" style="margin:14px 0 6px;">
+      ${steps.map(s => `<div class="step ${s.state}">${s.label}</div>`).join('')}
+    </div>`;
+  }
+
+  function decisionButtonsHTML(c) {
+    if (c.status === 'NEW') {
+      return `
+        <div class="flex gap-8 wrap" style="margin-top:16px;">
+          <button class="btn btn-danger"  data-act="reject">✕ Reject</button>
+          <button class="btn btn-primary" data-act="repair">🔧 Repair</button>
+          <button class="btn btn-success" data-act="replace">📦 Replace…</button>
+        </div>`;
+    }
+    if (c.status === 'PR_PENDING_APPROVAL') {
+      return `
+        <div class="banner warn" style="margin-top:14px;">
+          <strong>Approval 2 required.</strong> PR ${esc(c.pr_id)} is awaiting your approval. Approving issues the Purchase Order.
+        </div>
+        <div class="flex gap-8 wrap" style="margin-top:12px;">
+          <button class="btn btn-success" data-act="approve-pr">✓ Approve PO</button>
+          <button class="btn btn-danger"  data-act="reject-pr">✕ Reject PO</button>
+        </div>`;
+    }
+    return `<div class="banner" style="margin-top:14px;">Status: ${esc(c.status)} — no further action required.</div>`;
+  }
+
+  function showModal(c) {
+    const host = document.getElementById('modal-host');
+    const rec = c.recommendation || {};
+    const hist = c.history || [];
+    const approvals = c.approvals || [];
+
+    const ewmBlock = c.ewm_snapshot ? `
+      <div class="card" style="margin-top:14px;">
+        <h4>EWM CHECK</h4>
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">Status</div><div class="v">${fmt.ewmPill(c.ewm_status)}</div>
+          <div class="k">On hand</div><div class="v">${c.ewm_snapshot.on_hand} @ ${esc(c.ewm_snapshot.location)}</div>
+          <div class="k">Required</div><div class="v">${c.required_qty}</div>
+          <div class="k">Reservable</div><div class="v">${c.ewm_snapshot.reservable_qty}</div>
+          <div class="k">Shortage</div><div class="v">${c.ewm_snapshot.shortage_qty}</div>
+          <div class="k">Unit price</div><div class="v">${fmt.money(c.ewm_snapshot.unit_price)}</div>
+        </div>
+        <p class="small muted" style="margin-top:8px;">${esc(c.ewm_snapshot.message)}</p>
+      </div>` : '';
+
+    const supplierBlock = c.supplier ? `
+      <div class="card" style="margin-top:14px;">
+        <h4>AGENT · SUPPLIER SELECTION</h4>
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">Supplier</div><div class="v"><strong>${esc(c.supplier.name)}</strong> · ${esc(c.supplier.supplier_id)}</div>
+          <div class="k">Location</div><div class="v">${esc(c.supplier.location)} (${c.supplier.distance_km} km)</div>
+          <div class="k">Quality</div><div class="v">${c.supplier.quality}/10</div>
+          <div class="k">Lead time</div><div class="v">${c.supplier.delivery_days} days</div>
+          <div class="k">Certified</div><div class="v">${c.supplier.certified ? '✓' : '✕'}</div>
+        </div>
+        <p class="small muted" style="margin-top:8px;">${esc(c.supplier_reason || '')}</p>
+      </div>` : '';
+
+    const prBlock = c.purchase_requisition ? `
+      <div class="card" style="margin-top:14px;">
+        <h4>PURCHASE REQUISITION</h4>
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">PR ID</div><div class="v"><strong>${esc(c.purchase_requisition.pr_id)}</strong></div>
+          <div class="k">Quantity</div><div class="v">${c.purchase_requisition.quantity} (shortage only)</div>
+          <div class="k">Status</div><div class="v">${fmt.status(c.purchase_requisition.status)}</div>
+          <div class="k">Approved by</div><div class="v">${esc(c.purchase_requisition.approved_by || '—')}</div>
+          <div class="k">Approved at</div><div class="v">${fmt.dateTime(c.purchase_requisition.approved_at)}</div>
+        </div>
+      </div>` : '';
+
+    const poBlock = c.purchase_order ? `
+      <div class="card" style="margin-top:14px;">
+        <h4>PURCHASE ORDER</h4>
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">PO ID</div><div class="v"><strong>${esc(c.purchase_order.po_id)}</strong></div>
+          <div class="k">Quantity</div><div class="v">${c.purchase_order.quantity}</div>
+          <div class="k">Total</div><div class="v"><strong>${fmt.money(c.purchase_order.total_cost)}</strong></div>
+          <div class="k">ETA</div><div class="v">${c.purchase_order.expected_delivery_days} days</div>
+        </div>
+      </div>` : '';
+
+    const reservationBlock = c.reservation ? `
+      <div class="card" style="margin-top:14px;">
+        <h4>RESERVATION</h4>
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">Reservation</div><div class="v"><strong>${esc(c.reservation.reservation_id)}</strong></div>
+          <div class="k">Qty</div><div class="v">${c.reservation.quantity}</div>
+          <div class="k">Location</div><div class="v">${esc(c.reservation.location)}</div>
+          <div class="k">Status</div><div class="v">${fmt.status(c.reservation.status)}</div>
+        </div>
+      </div>` : '';
+
+    const eq = c.equipment;
+    const eqBlock = eq ? `
+      <div class="card" style="margin-top:14px;">
+        <h4>EQUIPMENT</h4>
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">ID · Model</div><div class="v">${esc(eq.equipment_id)} · ${esc(eq.model)}</div>
+          <div class="k">Location</div><div class="v">${esc(eq.location)}</div>
+          <div class="k">Flight hours</div><div class="v">${eq.flight_hours.toLocaleString()}</div>
+          <div class="k">Installed</div><div class="v">${esc(eq.installed)}</div>
+          <div class="k">Last inspection</div><div class="v">${esc(eq.last_inspection)}</div>
+        </div>
+        ${(eq.maintenance_history || []).length ? `
+          <h4 style="margin-top:14px;">MAINTENANCE HISTORY</h4>
+          <ul class="small muted" style="padding-left:18px; margin-top:6px;">
+            ${eq.maintenance_history.map(h => `<li>${esc(h.date)} — ${esc(h.action)} (${esc(h.technician)})</li>`).join('')}
+          </ul>` : ''}
+      </div>` : '';
+
+    host.innerHTML = `
+      <div class="modal-backdrop" id="modal-bd">
+        <div class="modal">
+          <div class="modal-head">
+            <div>
+              <h3>${esc(c.case_id)} · ${esc(c.component || '')}</h3>
+              <div class="muted small">Filed by <strong>${esc(operatorDisplay(c))}</strong> · ${fmt.dateTime(c.created_at)}</div>
+            </div>
+            <div class="flex gap-8 items-center wrap">
+              ${operatorChip(c)}
+              ${fmt.severity(c.severity)}
+              ${fmt.status(c.status)}
+              <button class="modal-close" id="modal-close">✕</button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div>
+              <div class="image-with-highlight" style="position:relative; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border);">
+                ${c.image_path ? `<img id="case-img" src="/${esc(c.image_path)}" style="width:100%; display:block;" />` : '<div class="empty-state">No image</div>'}
+                <div class="damage-highlight" style="left:28%; top:28%; width:44%; height:44%;"></div>
+              </div>
+              <div class="card" style="margin-top:14px;">
+                <h4>AGENT FINDING</h4>
+                <div class="kv" style="margin-top:10px;">
+                  <div class="k">Defect</div><div class="v">${esc(c.defect)}</div>
+                  <div class="k">Damaged area</div><div class="v">${esc(c.damaged_area)}</div>
+                  <div class="k">Confidence</div><div class="v">${fmt.pct(c.confidence)}</div>
+                  <div class="k">Agent source</div><div class="v">${(String(c.ai_source || '').toLowerCase() === 'mock' ? 'Vision Agent · offline' : c.ai_source ? 'Vision Agent · live' : '—')}</div>
+                </div>
+                <p class="small muted" style="margin-top:10px;">${esc(c.ai_report || '')}</p>
+              </div>
+              <div class="card" style="margin-top:14px;">
+                <h4>DECISION AGENT</h4>
+                <div class="kv" style="margin-top:10px;">
+                  <div class="k">Recommendation</div><div class="v"><strong>${esc(rec.decision || '—')}</strong></div>
+                  <div class="k">Risk level</div><div class="v">${esc(rec.risk_level || '—')} (${rec.risk_score || 0}/100)</div>
+                  <div class="k">Safety risk</div><div class="v">${esc(rec.safety_risk || '—')}</div>
+                  <div class="k">Downtime</div><div class="v">${esc(rec.estimated_downtime || '—')}</div>
+                </div>
+                <p class="small muted" style="margin-top:10px;">${esc(rec.reason || '')}</p>
+              </div>
+              ${decisionButtonsHTML(c)}
+            </div>
+
+            <div>
+              ${eqBlock}
+              ${ewmBlock}
+              ${reservationBlock}
+              ${supplierBlock}
+              ${prBlock}
+              ${poBlock}
+
+              <div class="card" style="margin-top:14px;">
+                <h4>CASE TIMELINE · AUDIT TRAIL</h4>
+                <div class="timeline" style="margin-top:10px;">
+                  ${hist.map(h => `
+                    <div class="tl-item">
+                      <div class="tl-dot"></div>
+                      <div class="tl-content">
+                        <div class="tl-action">${esc(h.action)}</div>
+                        <div class="tl-meta">${fmt.dateTime(h.at)} · ${esc(h.by)}</div>
+                        ${h.note ? `<div class="tl-note">${esc(h.note)}</div>` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              ${approvals.length ? `
+              <div class="card" style="margin-top:14px;">
+                <h4>APPROVALS</h4>
+                <div class="timeline" style="margin-top:10px;">
+                  ${approvals.map(a => `
+                    <div class="tl-item">
+                      <div class="tl-dot"></div>
+                      <div class="tl-content">
+                        <div class="tl-action">${esc(a.stage)} · ${esc(a.decision)}</div>
+                        <div class="tl-meta">${fmt.dateTime(a.at)} · ${esc(a.by)}</div>
+                        ${a.note ? `<div class="tl-note">${esc(a.note)}</div>` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-bd').addEventListener('click', (e) => { if (e.target.id === 'modal-bd') closeModal(); });
+    host.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', () => handleAction(c.case_id, btn.dataset.act)));
+  }
+
+  function closeModal() { document.getElementById('modal-host').innerHTML = ''; }
+
+  /* ═════════ ENHANCED REPLACE MODAL ═════════
+   * Shows the supervisor a live EWM stock check for the component,
+   * the AI-orchestrated recommended supplier with scoring rationale,
+   * and a cost preview — before committing the replacement pipeline.
+   * Returns a Promise that resolves to `true` when the supervisor
+   * confirms and the case is successfully transitioned, or `false`
+   * when they cancel. */
+  function openReplaceModal(caseObj, override) {
+    return new Promise(async (resolve) => {
+      const host = document.getElementById('modal-host');
+      const component = caseObj.component || '';
+      const caseId = caseObj.case_id || '';
+      const severity = (caseObj.severity || '').toUpperCase();
+      const urgency = severity === 'HIGH' ? 'URGENT' : severity === 'MEDIUM' ? 'NORMAL' : 'LOW';
+      const initialQty = Math.max(1, parseInt(caseObj.required_qty || 1, 10) || 1);
+
+      // ── Skeleton shown while the /api/replace-preview call runs ───
+      host.innerHTML = `
+        <div class="modal-backdrop" id="replace-bd">
+          <div class="modal replace-modal" style="width: min(920px, 100%);">
+            <div class="modal-head replace-head">
+              <div class="replace-head-main">
+                <div class="replace-eyebrow">Decision · Replace</div>
+                <h3>Replacement Orchestration</h3>
+                <div class="muted small">Case ${esc(caseId)} · ${esc(component || 'component')}${override ? ' · <strong>⚠ OVERRIDE</strong>' : ''}</div>
+              </div>
+              <div class="flex gap-8 items-center">
+                ${fmt.severity(caseObj.severity)}
+                <button class="modal-close" id="replace-close" type="button">✕</button>
+              </div>
+            </div>
+            <div class="replace-body">
+              <div class="replace-loading">
+                <div class="spinner" style="width:28px; height:28px; border-width:3px;"></div>
+                <div>Running EWM check + Agent supplier orchestration…</div>
+              </div>
+            </div>
+            <div class="replace-foot">
+              <button class="btn btn-ghost" id="replace-cancel" type="button">Cancel</button>
+              <button class="btn btn-success" id="replace-confirm" type="button" disabled>Confirm & initiate</button>
+            </div>
+          </div>
+        </div>`;
+
+      const bd = document.getElementById('replace-bd');
+      const closeBtn = document.getElementById('replace-close');
+      const cancelBtn = document.getElementById('replace-cancel');
+      const confirmBtn = document.getElementById('replace-confirm');
+
+      let currentQty = initialQty;
+      let currentPreview = null;
+      let settled = false;
+
+      function finish(value) {
+        if (settled) return; settled = true;
+        document.removeEventListener('keydown', onKey);
+        closeModal();
+        resolve(value);
+      }
+      function onKey(e) { if (e.key === 'Escape') finish(false); }
+      document.addEventListener('keydown', onKey);
+      closeBtn.addEventListener('click', () => finish(false));
+      cancelBtn.addEventListener('click', () => finish(false));
+      bd.addEventListener('click', (e) => { if (e.target === bd) finish(false); });
+
+      async function renderPreview() {
+        const body = document.querySelector('.replace-body');
+        body.innerHTML = `
+          <div class="replace-loading">
+            <div class="spinner" style="width:28px; height:28px; border-width:3px;"></div>
+            <div>Refreshing inventory + supplier recommendation for ${esc(String(currentQty))}× ${esc(component)}…</div>
+          </div>`;
+        confirmBtn.disabled = true;
+        try {
+          const preview = await API.replacePreview(component, currentQty, { caseId, urgency });
+          currentPreview = preview;
+          renderContent(preview);
+          confirmBtn.disabled = false;
+        } catch (err) {
+          body.innerHTML = `
+            <div class="banner error" style="margin:4px 0;">
+              <strong>Could not run EWM / supplier preview.</strong><br>
+              ${esc(err.message || 'Unknown error')}
+            </div>`;
+        }
+      }
+
+      function renderContent(p) {
+        const ewm = p.ewm || {};
+        const sel = p.supplier_selection || {};
+        const top = sel.supplier || {};
+        const alts = Array.isArray(sel.alternatives) ? sel.alternatives : [];
+        const cost = p.cost_preview || {};
+        const ewmStatus = (ewm.status || 'NONE').toUpperCase();
+
+        const stockBar = (() => {
+          const onHand = Number(ewm.on_hand || 0);
+          const req = Number(ewm.required_qty || currentQty || 1);
+          const pct = Math.min(100, Math.round((onHand / Math.max(req, 1)) * 100));
+          const color = ewmStatus === 'FULL' ? 'var(--success)' : ewmStatus === 'PARTIAL' ? 'var(--warning)' : 'var(--danger)';
+          return `<div class="stock-bar-wrap">
+                    <div class="stock-bar" style="width:${pct}%; background:${color};"></div>
+                  </div>
+                  <div class="flex justify-between small muted" style="margin-top:4px;">
+                    <span>${onHand} on hand</span>
+                    <span>${req} required</span>
+                  </div>`;
+        })();
+
+        const ewmBadge = `<span class="ewm-pill ewm-${ewmStatus}">${ewmStatus}</span>`;
+        const aiBadge = sel.ai_source === 'grok'
+          ? `<span class="ai-source-badge ai-grok">⚡ Grok Agent</span>`
+          : `<span class="ai-source-badge">⚙ Rule-based ranker</span>`;
+
+        document.querySelector('.replace-body').innerHTML = `
+          <!-- Quantity selector ─────────────────────────────── -->
+          <div class="replace-block">
+            <div class="replace-block-head">
+              <div>
+                <div class="replace-block-label">Required quantity</div>
+                <div class="replace-block-title">${esc(component)}</div>
+              </div>
+              <div class="qty-stepper">
+                <button class="qty-btn" data-step="-1" type="button" aria-label="Decrease">−</button>
+                <input class="qty-input" id="replace-qty" type="number" min="1" value="${esc(String(currentQty))}">
+                <button class="qty-btn" data-step="+1" type="button" aria-label="Increase">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inventory + Supplier side-by-side ─────────────────── -->
+          <div class="replace-grid">
+
+            <!-- EWM / Inventory card ─────────────────────────── -->
+            <div class="replace-card">
+              <div class="replace-card-head">
+                <div class="replace-card-icon">📦</div>
+                <div class="replace-card-title">
+                  <b>Inventory Stock · EWM</b>
+                  <span class="muted small">Live warehouse availability</span>
+                </div>
+                ${ewmBadge}
+              </div>
+
+              <div class="kv-rows">
+                <div class="kv-row"><span>Component</span><strong>${esc(ewm.component || component)}</strong></div>
+                <div class="kv-row"><span>Location</span><strong>${esc(ewm.location || '—')}</strong></div>
+                <div class="kv-row"><span>On hand</span><strong>${ewm.on_hand ?? 0}</strong></div>
+                <div class="kv-row"><span>Reservable</span><strong>${ewm.reservable_qty ?? 0}</strong></div>
+                <div class="kv-row"><span>Shortage</span><strong style="color: ${ewm.shortage_qty ? 'var(--warning)' : 'var(--text-1)'}">${ewm.shortage_qty ?? 0}</strong></div>
+                <div class="kv-row"><span>Unit price</span><strong>${fmt.money(ewm.unit_price || 0)}</strong></div>
+              </div>
+
+              ${stockBar}
+
+              <p class="replace-note">${esc(ewm.message || '')}</p>
+            </div>
+
+            <!-- Agent Supplier card ─────────────────────────────── -->
+            <div class="replace-card supplier-card ${ewmStatus === 'FULL' ? 'dimmed' : ''}">
+              <div class="replace-card-head">
+                <div class="replace-card-icon">🤖</div>
+                <div class="replace-card-title">
+                  <b>Agent-Recommended Supplier</b>
+                  <span class="muted small">${ewmStatus === 'FULL' ? 'Not needed · full reservation possible' : 'For the procurement shortage'}</span>
+                </div>
+                ${aiBadge}
+              </div>
+
+              ${top && top.supplier_id ? `
+                <div class="supplier-hero">
+                  <div class="supplier-avatar">${esc((top.name || '?').slice(0, 2).toUpperCase())}</div>
+                  <div class="supplier-main">
+                    <div class="supplier-name">${esc(top.name)}</div>
+                    <div class="supplier-meta">
+                      <span>${esc(top.supplier_id)}</span>
+                      <span>·</span>
+                      <span>${esc(top.location || '')}</span>
+                      ${top.certified ? `<span class="tiny-chip ok">✓ Certified</span>` : ''}
+                    </div>
+                  </div>
+                  <div class="supplier-score">
+                    <div class="score-num">${Math.round(top.score || 0)}</div>
+                    <div class="score-label">/ 100</div>
+                  </div>
+                </div>
+
+                <div class="supplier-stats">
+                  <div><span>Quality</span><strong>${top.quality ?? '—'}/10</strong></div>
+                  <div><span>Lead time</span><strong>${top.delivery_days ?? '—'}d</strong></div>
+                  <div><span>Distance</span><strong>${top.distance_km ?? '—'} km</strong></div>
+                  <div><span>Reliability</span><strong>${top.reliability != null ? Math.round(top.reliability * 100) + '%' : '—'}</strong></div>
+                </div>
+
+                <!-- Supplier quote — unit price + per-line total ─────────── -->
+                <div class="supplier-quote" style="
+                    margin-top:12px; padding:10px 14px; border-radius:10px;
+                    background: linear-gradient(135deg, rgba(0,108,248,0.12), rgba(0,171,255,0.06));
+                    border: 1px solid rgba(0,171,255,0.28);
+                    display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                  <div>
+                    <div class="replace-block-label" style="margin-bottom:2px;">Supplier Quote</div>
+                    <div class="muted small">
+                      ${(cost.supplier_cost_multiplier != null)
+                        ? `Unit price <strong style="color:var(--text-1)">${fmt.money(cost.supplier_unit_price || top.unit_price || 0)}</strong> · ${(cost.supplier_cost_multiplier * 100).toFixed(0)}% of EWM reference`
+                        : `Unit price <strong style="color:var(--text-1)">${fmt.money(cost.supplier_unit_price || top.unit_price || 0)}</strong>`}
+                    </div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div class="muted small" style="margin-bottom:2px;">Line total (${cost.shortage_qty || 0} × unit)</div>
+                    <div style="font-size:1.05rem; font-weight:700; color:var(--text-1);">
+                      ${fmt.money(cost.procurement_cost || (cost.supplier_unit_price || 0) * (cost.shortage_qty || 0))}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="supplier-reason">
+                  <div class="replace-block-label" style="margin-bottom:4px;">Agent Rationale</div>
+                  <p>${esc(sel.reason || '—')}</p>
+                </div>
+
+                ${alts.length ? `
+                  <details class="supplier-alts">
+                    <summary>Alternative suppliers considered (${alts.length})</summary>
+                    <ul>
+                      ${alts.map(a => `
+                        <li>
+                          <div><strong>${esc(a.name)}</strong> <span class="muted small">· ${esc(a.supplier_id)} · ${esc(a.location || '')}</span></div>
+                          <div class="muted small">Score ${Math.round(a.score || 0)}/100 · ${a.delivery_days ?? '—'}d lead · quality ${a.quality ?? '—'}/10${a.distance_km != null ? ' · ' + a.distance_km + ' km' : ''}</div>
+                        </li>`).join('')}
+                    </ul>
+                  </details>` : ''}
+              ` : `
+                <div class="banner warn" style="margin-top:8px;">
+                  No certified supplier available for this component.
+                </div>
+              `}
+            </div>
+          </div>
+
+          <!-- Cost preview ────────────────────────────────── -->
+          <div class="replace-cost">
+            <div class="cost-row">
+              <span>Reservation (${cost.reservable_qty || 0} × ${fmt.money(cost.ewm_unit_price || 0)})</span>
+              <strong>${fmt.money(cost.reserve_cost || 0)}</strong>
+            </div>
+            <div class="cost-row">
+              <span>Procurement (${cost.shortage_qty || 0} × ${cost.supplier_unit_price != null ? fmt.money(cost.supplier_unit_price) : '—'})</span>
+              <strong>${fmt.money(cost.procurement_cost || 0)}</strong>
+            </div>
+            <div class="cost-row total">
+              <span>Estimated total</span>
+              <strong>${fmt.money(cost.total_cost || 0)}</strong>
+            </div>
+          </div>
+        `;
+
+        // Quantity stepper wiring
+        const qInput = document.getElementById('replace-qty');
+        document.querySelectorAll('.qty-btn').forEach(b => b.addEventListener('click', () => {
+          const step = parseInt(b.dataset.step, 10) || 0;
+          const next = Math.max(1, (parseInt(qInput.value, 10) || 1) + step);
+          qInput.value = String(next);
+          if (next !== currentQty) { currentQty = next; renderPreview(); }
+        }));
+        let qTimer;
+        qInput.addEventListener('input', () => {
+          clearTimeout(qTimer);
+          qTimer = setTimeout(() => {
+            const n = Math.max(1, parseInt(qInput.value, 10) || 1);
+            qInput.value = String(n);
+            if (n !== currentQty) { currentQty = n; renderPreview(); }
+          }, 350);
+        });
+      }
+
+      // Initial load
+      renderPreview();
+
+      // Confirm click — actually commit the replacement
+      confirmBtn.addEventListener('click', async () => {
+        if (!currentPreview) return;
+        confirmBtn.disabled = true;
+        const label = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = '<span class="spinner" style="width:14px; height:14px; border-width:2px;"></span> Initiating…';
+        try {
+          const resp = await API.replace(caseId, currentQty, override);
+          finish(true);
+          await refreshAll();
+
+          // Prefer the direct backend response (authoritative) over the
+          // refreshed list row — listCases doesn't enrich PR/reservation.
+          const respCase = (resp && resp.case) || {};
+          const caseOut = (allCases || []).find(c => c.case_id === caseId) || respCase || caseObj;
+          const ewm = (resp && resp.ewm) || caseOut.ewm_snapshot || currentPreview.ewm || {};
+          const supplier = (resp && resp.supplier_selection && resp.supplier_selection.supplier)
+            || caseOut.supplier
+            || (currentPreview.supplier_selection && currentPreview.supplier_selection.supplier)
+            || {};
+          const pr = (resp && resp.pr) || caseOut.purchase_requisition || {};
+          const reservation = (resp && resp.reservation) || caseOut.reservation || {};
+          const cost = currentPreview.cost_preview || {};
+          const ewmStatus = (caseOut.ewm_status || ewm.status || 'NONE').toUpperCase();
+
+          // Compute the actual committed total — reservation at EWM cost +
+          // shortage at supplier cost. If cost_preview has it, prefer that;
+          // otherwise derive it locally so the popup is never $0.
+          const ewmUnit = Number(cost.ewm_unit_price || ewm.unit_price || 0);
+          const supUnit = Number(cost.supplier_unit_price || (supplier && supplier.unit_price) || 0)
+            || Number(ewmUnit * (supplier && supplier.cost_multiplier || 1.10));
+          const reservedQty = Number((reservation && reservation.quantity) || ewm.reservable_qty || 0);
+          const shortQty = Number(ewm.shortage_qty || (currentQty - reservedQty) || 0);
+          const derivedTotal = Number((reservedQty * ewmUnit) + (shortQty * supUnit));
+          const totalCost = Number(cost.total_cost) > 0 ? Number(cost.total_cost) : derivedTotal;
+
+          const details = [
+            { label: 'Case',        value: caseId },
+            { label: 'Component',   value: component || '—' },
+            { label: 'Quantity',    value: String(currentQty) },
+            { label: 'EWM outcome', value: ewmStatus },
+          ];
+          if (reservation && reservation.reservation_id) {
+            details.push({ label: 'Reservation', value: `${reservation.reservation_id} · ${reservation.quantity || ''} @ ${reservation.location || '—'}` });
+          }
+          if (pr && pr.pr_id) {
+            details.push({ label: 'PR ID',    html: `<strong>${esc(pr.pr_id)}</strong>` });
+            details.push({ label: 'PR status', value: (pr.status || 'PENDING_APPROVAL').replace(/_/g, ' ') });
+          }
+          if (supplier && supplier.name) {
+            details.push({ label: 'Supplier', value: `${supplier.name}${supplier.location ? ' · ' + supplier.location : ''}` });
+          }
+          if (supUnit) {
+            details.push({ label: 'Supplier unit price', value: fmt.money(supUnit) });
+          }
+          // Always show a non-zero estimated total
+          details.push({ label: 'Est. total', html: `<strong>${fmt.money(totalCost)}</strong>` });
+
+          // Next-step row — terse and self-contained. PR number + total are
+          // already surfaced in their own rows above, so this line stays a
+          // single-glance status ("Awaiting PR approval").
+          const nextStepText = ewmStatus === 'FULL'
+            ? 'Workflow complete'
+            : 'Awaiting PR approval';
+          details.push({ label: 'Next step', value: nextStepText });
+
+          if (override) details.push({ label: 'Override note', value: override.justification || '—' });
+
+          await ui.result({
+            title: override ? 'Replacement Initiated · Override' : 'Replacement Initiated',
+            message: ewmStatus === 'FULL'
+              ? 'EWM holds sufficient stock — immediate reservation placed.'
+              : 'EWM shortage detected — Purchase Requisition raised with Agent-ranked supplier.',
+            icon: '📦',
+            details,
+          });
+        } catch (err) {
+          confirmBtn.innerHTML = label;
+          confirmBtn.disabled = false;
+          await ui.alert({ title: 'Replace failed', message: err.message || 'Replace failed', tone: 'danger', icon: '✕' });
+        }
+      });
+    });
+  }
+
+  /* ═════════ DEFECT-KEYED REPAIR PLAN ═════════
+   * Maps a defect string + component to an AMM/SRM playbook. Each bucket
+   * returns an ordered list of short repair steps. Keyword match is loose
+   * so real vision-model output still lands in a sensible bucket. */
+  function defectRepairPlan(defectStr, componentStr) {
+    const d = String(defectStr || '').toLowerCase();
+    const c = String(componentStr || '').toLowerCase();
+    const has = (s, kws) => kws.some(k => s.includes(k));
+    let key = 'GENERIC';
+    if (has(d, ['crack', 'fracture'])) key = 'CRACK';
+    else if (has(d, ['corrosion', 'oxidation', 'rust'])) key = 'CORROSION';
+    else if (has(d, ['dent', 'deformation', 'dented'])) key = 'DENT';
+    else if (has(d, ['erosion', 'wear', 'worn'])) key = 'EROSION';
+    else if (has(d, ['burn', 'discolor', 'thermal', 'heat'])) key = 'THERMAL';
+    else if (has(d, ['foreign', 'fod', 'impact', 'bird'])) key = 'IMPACT';
+    else if (has(d, ['scratch', 'scuff', 'surface'])) key = 'SURFACE';
+    else if (has(d, ['delamination', 'composite'])) key = 'COMPOSITE';
+    else if (has(d, ['leak', 'seal'])) key = 'SEAL';
+    else if (has(d, ['loose', 'fastener', 'bolt'])) key = 'FASTENER';
+
+    const manual = has(c, ['engine', 'turbine', 'blade', 'compressor', 'fan', 'disk', 'rotor', 'shaft'])
+      ? 'AMM · Engine'
+      : has(c, ['wing', 'fuselage', 'nacelle', 'skin', 'panel', 'stringer', 'spar'])
+        ? 'SRM · Airframe'
+        : 'AMM · General';
+
+    const plans = {
+      CRACK: [
+        'Isolate and tag the affected zone; place equipment out of service.',
+        'Perform NDT (FPI / eddy-current) to map crack length and depth.',
+        'Remove crack to damage-tolerance limits per SRM 51-10; stop-drill ends.',
+        'Rework cavity, apply cold-work bushing or doubler patch as specified.',
+        'Re-inspect NDT + torque check; document rework photos in task card.',
+      ],
+      CORROSION: [
+        'Clean area — solvent wipe + mechanical de-scaling.',
+        'Measure material loss (ultrasonic thickness) vs. allowable limits.',
+        'Blend out corrosion pit; neutralise with inhibitor.',
+        'Apply primer + topcoat per approved scheme; verify dry-film thickness.',
+        'Log cycles to next inspection interval.',
+      ],
+      DENT: [
+        'Map dent boundary, depth and proximity to fasteners / structure.',
+        'Compare to SRM allowable damage chart — repair vs. blend vs. replace.',
+        'Dress the dent / filler per SRM; re-contour surface.',
+        'Restore surface finish; apply surface protection; ready for return to service.',
+      ],
+      EROSION: [
+        'Blend eroded edge within SRM limits.',
+        'Re-profile leading-edge to nominal chord.',
+        'Apply anti-erosion tape / coating per procedure.',
+        'Balance &amp; torque check (if rotating).',
+      ],
+      THERMAL: [
+        'Inspect adjacent thermal protection, wiring, composite plies.',
+        'Remove charred layer; re-finish substrate.',
+        'Apply high-temp refinishing system per AMM.',
+        'Perform functional check of associated system.',
+      ],
+      IMPACT: [
+        'NDT the impact site + 2× radius around it.',
+        'Measure deformation against allowable damage chart.',
+        'If within limits — dress, blend, inspect. Else escalate to REPLACE.',
+        'Record FOD event in equipment logbook.',
+      ],
+      SURFACE: [
+        'De-grease and de-mask area.',
+        'Polish out scratch / scuff; confirm minimum thickness.',
+        'Re-apply protective coating layer.',
+        'Visual and gloss inspection.',
+      ],
+      COMPOSITE: [
+        'Tap-test + ultrasonic map to confirm delamination boundary.',
+        'Remove damaged plies; prep scarf joint per SRM 51-70.',
+        'Lay-up replacement plies; vacuum-bag cure with calibrated cycle.',
+        'Post-cure NDT; paint and restore markings.',
+      ],
+      SEAL: [
+        'Depressurise and isolate the system; capture lost fluid.',
+        'Remove failed seal; inspect mating surfaces.',
+        'Fit new seal of correct spec; torque to AMM value.',
+        'Pressure-test; leak-check with soap or tracer gas.',
+      ],
+      FASTENER: [
+        'Back-off and remove affected fasteners.',
+        'Inspect holes for elongation / material loss.',
+        'Install new fasteners of correct grade; torque to AMM.',
+        'Safety-wire / cotter-pin as required.',
+      ],
+      GENERIC: [
+        'Cordon &amp; tag the area; open shop task card.',
+        'Perform visual + NDT inspection to characterise damage.',
+        'Apply appropriate AMM / SRM repair scheme.',
+        'Restore surface protection / coatings.',
+        'Final inspection, sign-off and release-to-service.',
+      ],
+    };
+    return { steps: plans[key], manual, key };
+  }
+
+  /* ═════════ SWITCH TABS (programmatic) ═════════
+   * Programmatically activates the named tab — mirrors the DOM change the
+   * manual .tab click listener makes. Used after repair to push the
+   * supervisor onto the Maintenance Orders view so the new MO is visible. */
+  function switchTab(name) {
+    const tabs = document.querySelectorAll('#tabs .tab');
+    const panels = document.querySelectorAll('.tab-panel');
+    let matched = false;
+    tabs.forEach(t => { t.classList.toggle('active', t.dataset.tab === name); if (t.dataset.tab === name) matched = true; });
+    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+    if (matched) {
+      try { document.getElementById('panel-' + name)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch {}
+    }
+  }
+
+  /* ═════════ AI AGENT · REPAIR REPORT MODAL ═════════
+   * Parallel to openReplaceModal — a full-preview modal showing the
+   * supervisor an AI Agent-generated repair report BEFORE dispatching the
+   * SAP Maintenance Order. Shows:
+   *   • Vision Agent finding + Decision Agent risk
+   *   • Defect-keyed repair plan (SRM / AMM steps)
+   *   • Downtime / priority / MO dispatch preview
+   *   • Equipment context + last maintenance history
+   * On confirm: API.repair → refreshAll → switchTab('maintenance') → ui.result.
+   * Returns a Promise<boolean> (true = dispatched, false = cancelled). */
+  function openRepairModal(caseObj, override) {
+    return new Promise((resolve) => {
+      const host = document.getElementById('modal-host');
+      const caseId = caseObj.case_id || '';
+      const component = caseObj.component || 'component';
+      const defect = caseObj.defect || '';
+      const severity = (caseObj.severity || '').toUpperCase();
+      const priority = severity === 'HIGH' ? 'URGENT'
+                     : severity === 'MEDIUM' ? 'NORMAL' : 'LOW';
+      const rec = caseObj.recommendation || {};
+      const eq = caseObj.equipment || null;
+
+      const plan = defectRepairPlan(defect, component);
+      const downtime = rec.estimated_downtime
+        || (severity === 'HIGH' ? '6–12 hours'
+            : severity === 'MEDIUM' ? '3–6 hours' : '1–3 hours');
+
+      // ── Price + reference look-up ────────────────────────────────────
+      // Pull the unit price from the live EWM inventory snapshot so the
+      // supervisor sees the commercial impact of the repair decision.
+      // Reference IDs (existing PR / MO / PO on the case, plus a
+      // placeholder for the MO that will be raised on confirm) let the
+      // supervisor cross-check what SAP artefacts are about to change.
+      const invRec = (allInv && allInv[component]) || {};
+      const unitPrice = Number(
+        (caseObj.ewm_snapshot && caseObj.ewm_snapshot.unit_price)
+        || invRec.unit_price
+        || 0
+      );
+      const qty = Math.max(1, Number(caseObj.required_qty || 1));
+      const estRepairCost = unitPrice * 0.35 * qty; // repair ≈ 35% of new part
+      const refIds = {
+        existing_mo: caseObj.initial_mo_id || caseObj.repair_mo_id || null,
+        existing_pr: caseObj.pr_id || null,
+        existing_po: caseObj.po_id || null,
+      };
+
+      const parts = [
+        { label: 'Consumables', value: 'Sealant, fasteners, lockwire, approved primer/topcoat.' },
+        { label: 'Special tooling', value: /crack|fracture/i.test(defect) ? 'Dye-penetrant kit, stop-drill jig'
+          : /corros|oxid/i.test(defect) ? 'Abrasive kit, conversion coating'
+          : /composite|delam/i.test(defect) ? 'Vacuum-bag, cure blanket, scarf tools'
+          : 'Standard SRM kit' },
+      ];
+
+      const eqHTML = eq ? `
+        <div class="replace-card" style="margin-top:14px;">
+          <div class="replace-card-head">
+            <div class="replace-card-icon">🛩</div>
+            <div class="replace-card-title">
+              <b>Equipment Context</b>
+              <span class="muted small">${esc(eq.equipment_id || '')} · ${esc(eq.model || '')}</span>
+            </div>
+          </div>
+          <div class="kv-rows">
+            <div class="kv-row"><span>Location</span><strong>${esc(eq.location || '—')}</strong></div>
+            <div class="kv-row"><span>Flight hours</span><strong>${Number(eq.flight_hours || 0).toLocaleString()}</strong></div>
+            <div class="kv-row"><span>Installed</span><strong>${esc(eq.installed || '—')}</strong></div>
+            <div class="kv-row"><span>Last inspection</span><strong>${esc(eq.last_inspection || '—')}</strong></div>
+          </div>
+          ${(eq.maintenance_history || []).length ? `
+            <p class="replace-note"><strong>Recent history:</strong> ${eq.maintenance_history.slice(-3).map(h => `${esc(h.date)} ${esc(h.action)}`).join(' · ')}</p>
+          ` : ''}
+        </div>` : '';
+
+      host.innerHTML = `
+        <div class="modal-backdrop" id="repair-bd">
+          <div class="modal replace-modal" style="width: min(920px, 100%);">
+            <div class="modal-head replace-head">
+              <div class="replace-head-main">
+                <div class="replace-eyebrow">Decision · Repair</div>
+                <h3>AI Agent · Repair Report</h3>
+                <div class="muted small">Case ${esc(caseId)} · ${esc(component)}${override ? ' · <strong>⚠ OVERRIDE</strong>' : ''}</div>
+              </div>
+              <div class="flex gap-8 items-center">
+                ${fmt.severity(caseObj.severity)}
+                <button class="modal-close" id="repair-close" type="button">✕</button>
+              </div>
+            </div>
+            <div class="replace-body">
+
+              <div class="replace-grid">
+
+                <!-- Agent finding + decision rationale ───────────────── -->
+                <div class="replace-card">
+                  <div class="replace-card-head">
+                    <div class="replace-card-icon">🔍</div>
+                    <div class="replace-card-title">
+                      <b>Agent Finding</b>
+                      <span class="muted small">Vision Agent + Decision Agent</span>
+                    </div>
+                    <span class="ai-source-badge">${(String(caseObj.ai_source || '').toLowerCase() === 'mock' ? 'Vision Agent · offline' : 'Vision Agent')}</span>
+                  </div>
+                  <div class="kv-rows">
+                    <div class="kv-row"><span>Defect</span><strong>${esc(defect || '—')}</strong></div>
+                    <div class="kv-row"><span>Damaged area</span><strong>${esc(caseObj.damaged_area || '—')}</strong></div>
+                    <div class="kv-row"><span>Confidence</span><strong>${fmt.pct(caseObj.confidence)}</strong></div>
+                    <div class="kv-row"><span>Risk level</span><strong>${esc(rec.risk_level || '—')} (${rec.risk_score || 0}/100)</strong></div>
+                    <div class="kv-row"><span>Safety risk</span><strong>${esc(rec.safety_risk || '—')}</strong></div>
+                  </div>
+                  <p class="replace-note">${esc(rec.reason || caseObj.ai_report || '')}</p>
+                </div>
+
+                <!-- Repair plan card ─────────────────────────────────── -->
+                <div class="replace-card supplier-card">
+                  <div class="replace-card-head">
+                    <div class="replace-card-icon">🔧</div>
+                    <div class="replace-card-title">
+                      <b>Recommended Repair Plan</b>
+                      <span class="muted small">${esc(plan.manual)} · playbook ${esc(plan.key)}</span>
+                    </div>
+                    <span class="tiny-chip ok">Priority · ${esc(priority)}</span>
+                  </div>
+                  <ol class="repair-steps" style="padding-left:18px; margin:8px 0 4px; font-size:.88rem; line-height:1.5;">
+                    ${plan.steps.map(s => `<li style="margin-bottom:4px;">${s}</li>`).join('')}
+                  </ol>
+                  <div class="supplier-stats" style="margin-top:10px;">
+                    <div><span>Est. downtime</span><strong>${esc(downtime)}</strong></div>
+                    <div><span>MO priority</span><strong>${esc(priority)}</strong></div>
+                    <div><span>Severity</span><strong>${esc(caseObj.severity || '—')}</strong></div>
+                    <div><span>Dispatch MO</span><strong>${caseObj.initial_mo_id ? esc(caseObj.initial_mo_id) : 'New'}</strong></div>
+                  </div>
+                  <div class="supplier-reason">
+                    <div class="replace-block-label" style="margin-bottom:4px;">Parts &amp; tooling</div>
+                    ${parts.map(p => `<p class="small" style="margin:2px 0;"><strong>${esc(p.label)}:</strong> ${esc(p.value)}</p>`).join('')}
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Cost & SAP reference card ─────────────────────────── -->
+              <div class="replace-card" style="margin-top:14px;">
+                <div class="replace-card-head">
+                  <div class="replace-card-icon">💰</div>
+                  <div class="replace-card-title">
+                    <b>Cost &amp; SAP Reference</b>
+                    <span class="muted small">Part pricing + Maintenance Order reference</span>
+                  </div>
+                  <span class="tiny-chip ok">${unitPrice ? fmt.money(estRepairCost) + ' est.' : 'No EWM price'}</span>
+                </div>
+                <div class="kv-rows">
+                  <div class="kv-row"><span>Part unit price (EWM)</span><strong>${unitPrice ? fmt.money(unitPrice) : '—'}</strong></div>
+                  <div class="kv-row"><span>Quantity</span><strong>${qty}</strong></div>
+                  <div class="kv-row"><span>Estimated repair cost</span><strong>${unitPrice ? fmt.money(estRepairCost) : '—'} <span class="muted small">(~35% of a new part)</span></strong></div>
+                  <div class="kv-row"><span>Maintenance Order</span><strong>${refIds.existing_mo ? esc(refIds.existing_mo) + ' <span class=\"muted small\">(reused · will move to UNDER_REPAIR)</span>' : '<em class=\"muted\">Will be generated on confirm</em>'}</strong></div>
+                  <div class="kv-row"><span>Linked Purchase Requisition</span><strong>${refIds.existing_pr ? esc(refIds.existing_pr) : '—'}</strong></div>
+                  <div class="kv-row"><span>Linked Purchase Order</span><strong>${refIds.existing_po ? esc(refIds.existing_po) : '—'}</strong></div>
+                </div>
+                <p class="replace-note">Repair does not raise a new PR/PO. On confirm, the SAP Maintenance Order shown above is opened (or reused) at status <strong>UNDER_REPAIR</strong>.</p>
+              </div>
+
+              ${eqHTML}
+
+            </div>
+            <div class="replace-foot">
+              <button class="btn btn-ghost" id="repair-cancel" type="button">Cancel</button>
+              <button class="btn btn-success" id="repair-confirm" type="button">🔧 Dispatch Repair · Open MO</button>
+            </div>
+          </div>
+        </div>`;
+
+      const bd = document.getElementById('repair-bd');
+      const closeBtn = document.getElementById('repair-close');
+      const cancelBtn = document.getElementById('repair-cancel');
+      const confirmBtn = document.getElementById('repair-confirm');
+      let settled = false;
+
+      function finish(v) {
+        if (settled) return; settled = true;
+        document.removeEventListener('keydown', onKey);
+        closeModal();
+        resolve(v);
+      }
+      function onKey(e) { if (e.key === 'Escape') finish(false); }
+      document.addEventListener('keydown', onKey);
+      closeBtn.addEventListener('click', () => finish(false));
+      cancelBtn.addEventListener('click', () => finish(false));
+      bd.addEventListener('click', (e) => { if (e.target === bd) finish(false); });
+
+      confirmBtn.addEventListener('click', async () => {
+        confirmBtn.disabled = true;
+        const label = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = '<span class="spinner" style="width:14px; height:14px; border-width:2px;"></span> Dispatching…';
+        try {
+          const resp = await API.repair(caseId, override);
+          finish(true);
+          await refreshAll();
+          switchTab('maintenance');
+          const mo = (resp && resp.maintenance_order) || {};
+          const caseOut = (resp && resp.case) || caseObj;
+          const details = [
+            { label: 'Case',          value: caseId },
+            { label: 'Component',     value: component },
+            { label: 'Defect',        value: defect || '—' },
+            { label: 'Severity',      html: fmt.severity(caseObj.severity) },
+            { label: 'Unit price',    value: unitPrice ? fmt.money(unitPrice) : '—' },
+            { label: 'Est. repair cost', value: unitPrice ? fmt.money(estRepairCost) : '—' },
+            { label: 'MO ID',         html: `<strong>${esc(mo.maintenance_order_id || caseOut.repair_mo_id || caseOut.initial_mo_id || '—')}</strong>` },
+            { label: 'MO status',     html: fmt.status(mo.status || 'UNDER_REPAIR') },
+            { label: 'Priority',      value: mo.priority || priority },
+            { label: 'Est. downtime', value: downtime },
+            { label: 'Playbook',      value: `${plan.key} · ${plan.manual}` },
+            { label: 'Linked PR',     value: caseOut.pr_id || caseObj.pr_id || '—' },
+            { label: 'Linked PO',     value: caseOut.po_id || caseObj.po_id || '—' },
+          ];
+          if (override) details.push({ label: 'Override', html: `<strong style="color:var(--warning)">Agent recommended ${esc(override.ai_recommendation)} · justification logged</strong>` });
+          await ui.result({
+            title: override ? 'Repair dispatched · override applied' : 'Repair dispatched · MO opened',
+            message: 'The Maintenance Order has been opened in SAP PM and the case is now UNDER_REPAIR. Switched to the Maintenance Orders view.',
+            tone: 'success',
+            icon: '🔧',
+            details,
+          });
+        } catch (err) {
+          confirmBtn.innerHTML = label;
+          confirmBtn.disabled = false;
+          await ui.alert({ title: 'Repair dispatch failed', message: err.message || 'Unknown error', tone: 'danger', icon: '✕' });
+        }
+      });
+    });
+  }
+
+
+  /**
+   * Returns a normalised AI recommendation key — REPAIR | REPLACE | REJECT | RESUBMIT | null
+   */
+  function aiRecommendation(c) {
+    const rec = (c && c.recommendation) || {};
+    const d = String(rec.decision || '').toUpperCase().trim();
+    if (['REPAIR', 'REPLACE', 'REJECT', 'RESUBMIT'].includes(d)) return d;
+    return null;
+  }
+
+  /**
+   * Map an action button to the decision it represents — used to detect
+   * overrides of the AI's recommendation.
+   */
+  function actionDecision(action) {
+    return ({
+      'repair':   'REPAIR',
+      'replace':  'REPLACE',
+      'reject':   'REJECT',
+      'resubmit': 'RESUBMIT',
+    })[action] || null;
+  }
+
+  /**
+   * Build an override descriptor WITHOUT showing a blocking popup. Previous
+   * implementations popped a two-step "type OVERRIDE + justify" dialog
+   * before the repair/reject/replace report — that gate was the reason the
+   * supervisor wasn't seeing report popups when the AI recommended a
+   * different decision. We now surface the override fact *inside* the
+   * report / result popups instead, keeping the audit trail intact without
+   * adding friction. Returns { proceed: true, override: {...} | null }. */
+  function buildOverride(caseObj, action) {
+    const supDecision = actionDecision(action);
+    const aiRec = aiRecommendation(caseObj);
+    if (!supDecision || !aiRec || supDecision === aiRec) {
+      return { proceed: true, override: null };
+    }
+    return {
+      proceed: true,
+      override: {
+        ai_recommendation: aiRec,
+        supervisor_decision: supDecision,
+        justification: `Supervisor chose ${supDecision} despite the Agent recommending ${aiRec}.`,
+        confirmed_at: new Date().toISOString(),
+      },
+    };
+  }
+
+  async function handleAction(caseId, action) {
+    try {
+      // Always pull the enriched case (equipment + maintenance history +
+      // PR / PO / reservation records) so the downstream modals and
+      // result popups have full data. Fall back to the cached list row
+      // if the detail fetch fails.
+      let caseObj;
+      try { caseObj = await API.getCase(caseId); }
+      catch {
+        caseObj = (allCases || []).find(c => c.case_id === caseId) || { case_id: caseId };
+      }
+
+      // Build a silent override descriptor if the supervisor's choice
+      // differs from the AI's recommendation. No blocking popup — the
+      // fact is surfaced inside the report / result popups instead so
+      // clicking Repair / Reject always opens the expected report.
+      const { override } = buildOverride(caseObj, action);
+
+      if (action === 'reject') {
+        // Single centered popup — matches the "after replacement" result
+        // dialog: shows case summary + Agent finding + part price + SAP
+        // refs + a required reason textarea, all in one ui-dialog.
+        // On confirm → API.reject → refreshAll (case drops out of the
+        // NEW inbox filter) → final ui.result summary popup.
+        const rec = caseObj.recommendation || {};
+        const invRec = (allInv && allInv[caseObj.component]) || {};
+        const unitPrice = Number(
+          (caseObj.ewm_snapshot && caseObj.ewm_snapshot.unit_price)
+          || invRec.unit_price
+          || 0
+        );
+        const qty = Math.max(1, Number(caseObj.required_qty || 1));
+        const partValue = unitPrice * qty;
+        const existingMO = caseObj.initial_mo_id || caseObj.repair_mo_id || '—';
+        const existingPR = caseObj.pr_id || '—';
+        const existingPO = caseObj.po_id || '—';
+
+        const reason = await ui.prompt({
+          title: 'Reject Case',
+          message: `This closes the case and writes the reason to the audit trail. The case will drop from the Approval 1 inbox immediately.`,
+          placeholder: 'e.g. Image too blurry / not actionable / duplicate filing / out of scope',
+          required: true,
+          multiline: true,
+          minRows: 3,
+          tone: 'danger',
+          icon: '✕',
+          confirmLabel: '✕ Confirm reject',
+          cancelLabel: 'Cancel',
+          details: [
+            { label: 'Case',               value: caseId },
+            { label: 'Component',          value: caseObj.component || '—' },
+            { label: 'Defect',             value: caseObj.defect || '—' },
+            { label: 'Damaged area',       value: caseObj.damaged_area || '—' },
+            { label: 'Severity',           value: caseObj.severity || '—' },
+            { label: 'Confidence',         value: fmt.pct(caseObj.confidence) },
+            { label: 'Agent recommended',  value: rec.decision || '—' },
+            { label: 'Risk level',         value: `${rec.risk_level || '—'} (${rec.risk_score || 0}/100)` },
+            { label: 'Part unit price',    value: unitPrice ? fmt.money(unitPrice) : '—' },
+            { label: 'Avoided spend',      html: `<strong>${unitPrice ? fmt.money(partValue) : '—'}</strong> <span class="muted small">(no MO / PR / PO will be raised)</span>` },
+            { label: 'Linked MO',          value: existingMO },
+            { label: 'Linked PR',          value: existingPR },
+            { label: 'Linked PO',          value: existingPO },
+            { label: 'Final status',       value: 'REJECTED · workflow closed' },
+          ],
+        });
+        if (reason === null) return;
+        closeModal();
+        await API.reject(caseId, reason);
+        await refreshAll();
+        await ui.result({
+          title: 'Case Rejected',
+          message: 'Case closed — reason logged on the audit trail. Removed from Approval 1 inbox.',
+          tone: 'danger',
+          icon: '✕',
+          details: [
+            { label: 'Case',         value: caseId },
+            { label: 'Component',    value: caseObj.component || '—' },
+            { label: 'Defect',       value: caseObj.defect || '—' },
+            { label: 'Severity',     value: caseObj.severity || '—' },
+            { label: 'Unit price',   value: unitPrice ? fmt.money(unitPrice) : '—' },
+            { label: 'Avoided spend',value: unitPrice ? fmt.money(partValue) : '—' },
+            { label: 'Linked MO',    value: existingMO },
+            { label: 'Linked PR',    value: existingPR },
+            { label: 'Linked PO',    value: existingPO },
+            { label: 'Reason',    value: reason },
+            { label: 'Status',    value: 'REJECTED' },
+          ],
+        });
+        return;
+      }
+
+      if (action === 'resubmit') {
+        const n = await ui.prompt({
+          title: 'Send back to operator',
+          message: `Tell the operator what to recapture or clarify.`,
+          placeholder: 'e.g. Please retake from a closer angle in better light.',
+          required: true,
+          multiline: true,
+          tone: 'warn',
+          icon: '↩',
+          confirmLabel: 'Return to operator',
+        });
+        if (n === null) return;
+        await API.resubmit(caseId, n);
+        closeModal();
+        await refreshAll();
+        await ui.result({
+          title: 'Returned to Operator',
+          message: 'Case sent back for re-capture or clarification.',
+          tone: 'warn',
+          icon: '↩',
+          details: [
+            { label: 'Case',       value: caseId },
+            { label: 'Component',  value: caseObj.component || '—' },
+            { label: 'Instruction',value: n },
+            { label: 'Status',     value: 'RESUBMIT' },
+          ],
+        });
+        return;
+      }
+
+      if (action === 'repair') {
+        // Full-preview AI repair-report modal — parallel to the Replace
+        // experience. The modal itself drives API.repair + refreshAll +
+        // tab switch + ui.result on confirmation, so we just delegate.
+        closeModal();
+        await openRepairModal(caseObj, override);
+        return;
+      }
+
+      if (action === 'replace') {
+        closeModal();
+        await openReplaceModal(caseObj, override);
+        return;
+      }
+
+      if (action === 'approve-pr') {
+        const supplier = caseObj.supplier || {};
+        const pr = caseObj.purchase_requisition || {};
+        const estTotal = (Number((caseObj.ewm_snapshot && caseObj.ewm_snapshot.unit_price) || 1000))
+          * (Number(pr.quantity) || 0);
+        const ok = await ui.confirm({
+          title: 'Approve Purchase Order?',
+          message: `This will issue the Purchase Order to the selected supplier. The action cannot be undone.`,
+          tone: 'success',
+          icon: '✓',
+          confirmLabel: 'Yes, issue PO',
+          cancelLabel: 'Cancel',
+          details: [
+            { label: 'Case',       value: caseObj.case_id || '—' },
+            { label: 'PR ID',      value: caseObj.pr_id || '—' },
+            { label: 'Component',  value: caseObj.component || '—' },
+            { label: 'Quantity',   value: String(pr.quantity || '—') },
+            { label: 'Supplier',   value: supplier.name || '—' },
+            { label: 'Est. total', value: fmt.money(estTotal) },
+          ],
+        });
+        if (!ok) return;
+        const resp = await API.approvePR(caseId);
+        closeModal();
+        await refreshAll();
+        const po = (resp && resp.po) || {};
+        const prOut = (resp && resp.pr) || pr;
+        const caseOut = (resp && resp.case) || caseObj;
+        await ui.result({
+          title: 'Purchase Order Issued',
+          message: 'PR approved — PO auto-issued to the selected supplier.',
+          icon: '📦',
+          details: [
+            { label: 'Case',        value: caseId },
+            { label: 'PR ID',       value: prOut.pr_id || caseObj.pr_id || '—' },
+            { label: 'PO ID',       value: po.po_id || '—' },
+            { label: 'Component',   value: caseOut.component || caseObj.component || '—' },
+            { label: 'Quantity',    value: String(po.quantity || prOut.quantity || '—') },
+            { label: 'Supplier',    value: po.supplier_name || supplier.name || '—' },
+            { label: 'Total cost',  value: fmt.money(po.total_cost || estTotal) },
+            { label: 'ETA',         value: (po.expected_delivery_days != null ? `${po.expected_delivery_days} days` : '—') },
+            { label: 'Status',      value: (caseOut.status || 'PROCUREMENT_COMPLETED').replace(/_/g, ' ') },
+          ],
+        });
+        return;
+      }
+
+      if (action === 'reject-pr') {
+        const n = await ui.prompt({
+          title: 'Reject Purchase Order',
+          message: `Reason will be recorded against PR ${esc(caseObj.pr_id || '—')}.`,
+          placeholder: 'e.g. Supplier quality flag, budget hold, alternative path identified',
+          required: true,
+          multiline: true,
+          tone: 'danger',
+          icon: '✕',
+          confirmLabel: 'Reject PO',
+        });
+        if (n === null) return;
+        await API.rejectPR(caseId, n);
+        closeModal();
+        await refreshAll();
+        await ui.result({
+          title: 'Purchase Order Rejected',
+          message: 'PR/PO rejected — reason logged on the audit trail.',
+          tone: 'danger',
+          icon: '✕',
+          details: [
+            { label: 'Case',      value: caseId },
+            { label: 'PR ID',     value: caseObj.pr_id || '—' },
+            { label: 'Component', value: caseObj.component || '—' },
+            { label: 'Supplier',  value: (caseObj.supplier && caseObj.supplier.name) || '—' },
+            { label: 'Reason',    value: n },
+            { label: 'Status',    value: 'PR_REJECTED' },
+          ],
+        });
+        return;
+      }
+    } catch (err) {
+      await ui.alert({ title: 'Action failed', message: err.message, tone: 'danger', icon: '✕' });
+    }
+  }
+
+  /* ═════════ STRUCTURED DASHBOARD PDF REPORT ═════════ */
+  function plainMoney(n) {
+    return `$${(Number(n) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+  function plainDate(iso) {
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleString(); } catch { return iso; }
+  }
+
+  function downloadDashboardPDF() {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      toast('PDF library not loaded yet — try again in a moment.', 'error');
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+    const PURPLE = [123, 47, 247];
+    const GREY = [110, 110, 120];
+
+    // ── Header ──
+    doc.setFillColor(...PURPLE);
+    doc.rect(0, 0, 297, 22, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('HCL AI Force · Intelligent Maintenance', 14, 10);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('Supervisor Dashboard · Summary Report', 14, 17);
+    doc.setFontSize(9);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 297 - 14, 10, { align: 'right' });
+    doc.text(`Total cases: ${(allCases || []).length}`, 297 - 14, 17, { align: 'right' });
+
+    doc.setTextColor(0, 0, 0);
+
+    // ── KPI cards (4 across) ──
+    const kpis = [
+      ['Total Cases', String(lastStats.total_cases ?? (allCases || []).length)],
+      ['Maintenance Orders', String(lastStats.maintenance_orders ?? allMOs.length)],
+      ['Purchase Orders', String(lastStats.purchase_orders ?? allPOs.length)],
+      ['Total Spend', plainMoney(lastStats.total_procurement_spend ?? allPOs.reduce((s, p) => s + (p.total_cost || 0), 0))],
+    ];
+    let y = 30;
+    const cardW = (297 - 28) / 4;
+    kpis.forEach((k, i) => {
+      const x = 14 + i * cardW;
+      doc.setDrawColor(220, 220, 230);
+      doc.setFillColor(247, 244, 255);
+      doc.roundedRect(x, y, cardW - 4, 22, 2, 2, 'FD');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(...GREY);
+      doc.text(k[0].toUpperCase(), x + 4, y + 7);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(...PURPLE);
+      doc.text(k[1], x + 4, y + 17);
+    });
+    doc.setTextColor(0, 0, 0);
+    y += 30;
+
+    // ── Status / Severity / Decision summary tables ──
+    const statusRows = Object.entries(lastStats.status_counts || {}).map(([k, v]) => [k.replace(/_/g, ' '), v]);
+    const severityRows = Object.entries(lastStats.severity_counts || {}).map(([k, v]) => [k, v]);
+    const decisionRows = Object.entries(lastStats.decision_counts || {}).map(([k, v]) => [k, v]);
+    const ewmRows = Object.entries(lastStats.ewm_counts || {}).map(([k, v]) => [k, v]);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('Operational Breakdown', 14, y);
+    y += 2;
+
+    const colW = (297 - 28 - 12) / 4;
+    const blocks = [
+      { title: 'Status', rows: statusRows },
+      { title: 'Severity', rows: severityRows },
+      { title: 'Decision', rows: decisionRows },
+      { title: 'EWM', rows: ewmRows },
+    ];
+    blocks.forEach((b, i) => {
+      doc.autoTable({
+        head: [[b.title, '#']],
+        body: b.rows.length ? b.rows : [['—', 0]],
+        startY: y + 4,
+        margin: { left: 14 + i * (colW + 4) },
+        tableWidth: colW,
+        styles: { fontSize: 8, cellPadding: 1.5 },
+        headStyles: { fillColor: PURPLE, textColor: 255 },
+        theme: 'striped',
+      });
+    });
+    y = doc.lastAutoTable.finalY + 8;
+
+    // ── Case Ledger ──
+    if (y > 180) { doc.addPage(); y = 20; }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Case Ledger · Full Lifecycle', 14, y);
+    const ledgerHead = [[
+      'Case', 'Component', 'Defect', 'Severity', 'Decision', 'EWM',
+      'Reservation', 'Supplier', 'PR', 'PO', 'Total', 'Status', 'Updated'
+    ]];
+    const ledgerBody = (allCases || []).map(c => [
+      c.case_id || '—',
+      c.component || '—',
+      c.defect || '—',
+      c.severity || '—',
+      c.decision || '—',
+      c.ewm_status || '—',
+      c.reservation_id ? `${c.reservation_id}${c.reserved_qty ? ' (' + c.reserved_qty + ')' : ''}` : '—',
+      (c.supplier && c.supplier.name) ? c.supplier.name : '—',
+      c.pr_id ? `${c.pr_id}${c.pr_status ? ' / ' + c.pr_status : ''}` : '—',
+      c.po_id || '—',
+      c.total_cost != null ? plainMoney(c.total_cost) : '—',
+      (c.status || '—').replace(/_/g, ' '),
+      plainDate(c.updated_at),
+    ]);
+    doc.autoTable({
+      head: ledgerHead,
+      body: ledgerBody.length ? ledgerBody : [['—','—','—','—','—','—','—','—','—','—','—','—','—']],
+      startY: y + 3,
+      margin: { left: 14, right: 14 },
+      styles: { fontSize: 7, cellPadding: 1.4, overflow: 'linebreak' },
+      headStyles: { fillColor: PURPLE, textColor: 255, fontSize: 7.5 },
+      alternateRowStyles: { fillColor: [248, 246, 254] },
+      theme: 'grid',
+    });
+
+    // ── Maintenance Orders + Purchase Orders sections ──
+    doc.addPage();
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('SAP Maintenance Orders', 14, 18);
+    doc.autoTable({
+      head: [['MO', 'Case', 'Equipment', 'Component', 'Severity', 'Priority', 'Status', 'Created']],
+      body: (allMOs || []).map(m => [
+        m.maintenance_order_id, m.case_id, m.equipment_id, m.component,
+        m.severity, m.priority, (m.status || '').replace(/_/g, ' '), plainDate(m.created_at)
+      ]),
+      startY: 22,
+      styles: { fontSize: 8, cellPadding: 1.5 },
+      headStyles: { fillColor: PURPLE, textColor: 255 },
+      theme: 'grid',
+    });
+
+    let y2 = doc.lastAutoTable.finalY + 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Purchase Orders', 14, y2);
+    doc.autoTable({
+      head: [['PO', 'Case', 'Supplier', 'Qty', 'Total', 'ETA (days)', 'Created']],
+      body: (allPOs || []).map(p => [
+        p.po_id, p.case_id, p.supplier_name, p.quantity,
+        plainMoney(p.total_cost), p.expected_delivery_days, plainDate(p.created_at)
+      ]),
+      startY: y2 + 3,
+      styles: { fontSize: 8, cellPadding: 1.5 },
+      headStyles: { fillColor: PURPLE, textColor: 255 },
+      theme: 'grid',
+    });
+
+    y2 = doc.lastAutoTable.finalY + 8;
+    if (y2 > 180) { doc.addPage(); y2 = 18; }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Reservations', 14, y2);
+    doc.autoTable({
+      head: [['Reservation', 'Case', 'Component', 'Qty', 'Location', 'Status', 'Created']],
+      body: (allRes || []).map(r => [
+        r.reservation_id, r.case_id, r.component, r.quantity,
+        r.location, (r.status || '').replace(/_/g, ' '), plainDate(r.created_at)
+      ]),
+      startY: y2 + 3,
+      styles: { fontSize: 8, cellPadding: 1.5 },
+      headStyles: { fillColor: PURPLE, textColor: 255 },
+      theme: 'grid',
+    });
+
+    // ── Footer page numbers ──
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(...GREY);
+      doc.text(`Page ${i} of ${pageCount}`, 297 - 14, 205, { align: 'right' });
+      doc.text('© HCL Technologies · AI Force · Confidential', 14, 205);
+    }
+
+    const filename = `HCL_AI_Force_Dashboard_Report_${new Date().toISOString().slice(0, 10)}.pdf`;
+    doc.save(filename);
+    toast('Dashboard PDF downloaded ✓', 'success');
+  }
+
+  /* ═════════ PO INVOICE PDF ═════════ */
+  function downloadInvoicePDF(poId) {
+    const po = (allPOs || []).find(p => p.po_id === poId);
+    if (!po) { toast('PO not found.', 'error'); return; }
+    const caseRow = (allCases || []).find(c => c.case_id === po.case_id) || {};
+    const supplier = (allSups || []).find(s => s.name === po.supplier_name) || {};
+    const unitPrice = po.quantity ? (po.total_cost / po.quantity) : po.total_cost;
+    const subtotal = po.total_cost || 0;
+    const taxRate = 0.08; // 8% indicative
+    const tax = +(subtotal * taxRate).toFixed(2);
+    const grandTotal = +(subtotal + tax).toFixed(2);
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const PURPLE = [123, 47, 247];
+    const GREY = [110, 110, 120];
+    const W = 210;
+
+    // ── Header band ──
+    doc.setFillColor(...PURPLE);
+    doc.rect(0, 0, W, 28, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.text('INVOICE', 14, 14);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('HCL AI Force · Intelligent Maintenance', 14, 22);
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`# ${po.po_id}`, W - 14, 14, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(`Issued: ${plainDate(po.created_at)}`, W - 14, 21, { align: 'right' });
+    doc.text(`Case: ${po.case_id}`, W - 14, 26, { align: 'right' });
+
+    doc.setTextColor(0, 0, 0);
+
+    // ── Bill From / Bill To ──
+    let y = 38;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('BILLED FROM', 14, y);
+    doc.text('SUPPLIER', 110, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    y += 5;
+    doc.text('HCL Technologies — AI Force', 14, y);
+    doc.text(po.supplier_name || supplier.name || '—', 110, y);
+    y += 4;
+    doc.text('Intelligent Maintenance & Procurement', 14, y);
+    doc.text(`ID: ${supplier.supplier_id || '—'}`, 110, y);
+    y += 4;
+    doc.text('procurement@hcltech.example', 14, y);
+    doc.text(`Location: ${supplier.location || '—'}`, 110, y);
+    y += 4;
+    doc.text('AP Reference: ' + (po.case_id || '—'), 14, y);
+    doc.text(`Lead time: ${supplier.delivery_days != null ? supplier.delivery_days + ' days' : (po.expected_delivery_days + 'd')}`, 110, y);
+
+    // ── Order context summary ──
+    y += 10;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('ORDER CONTEXT', 14, y);
+    doc.autoTable({
+      startY: y + 3,
+      head: [['Field', 'Value']],
+      body: [
+        ['PO ID', po.po_id],
+        ['Linked Case', po.case_id],
+        ['Component', caseRow.component || '—'],
+        ['Defect', caseRow.defect || '—'],
+        ['Damaged area', caseRow.damaged_area || '—'],
+        ['Severity', caseRow.severity || '—'],
+        ['Equipment', caseRow.equipment_id || '—'],
+        ['Linked PR', caseRow.pr_id || '—'],
+        ['ETA', `${po.expected_delivery_days || supplier.delivery_days || '—'} days`],
+      ],
+      styles: { fontSize: 8.5, cellPadding: 2 },
+      headStyles: { fillColor: PURPLE, textColor: 255 },
+      theme: 'striped',
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── Line items ──
+    let y3 = doc.lastAutoTable.finalY + 6;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('LINE ITEMS', 14, y3);
+    doc.autoTable({
+      startY: y3 + 3,
+      head: [['#', 'Description', 'Qty', 'Unit Price', 'Amount']],
+      body: [[
+        '1',
+        `${caseRow.component || 'Aerospace component'} — replacement`,
+        String(po.quantity || 1),
+        plainMoney(unitPrice),
+        plainMoney(subtotal),
+      ]],
+      styles: { fontSize: 9, cellPadding: 2.5 },
+      headStyles: { fillColor: PURPLE, textColor: 255 },
+      columnStyles: {
+        0: { cellWidth: 12, halign: 'center' },
+        2: { halign: 'right', cellWidth: 20 },
+        3: { halign: 'right', cellWidth: 35 },
+        4: { halign: 'right', cellWidth: 35 },
+      },
+      theme: 'grid',
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── Totals ──
+    let y4 = doc.lastAutoTable.finalY + 4;
+    doc.autoTable({
+      startY: y4,
+      body: [
+        ['Subtotal', plainMoney(subtotal)],
+        [`Tax (${(taxRate * 100).toFixed(0)}%)`, plainMoney(tax)],
+        [{ content: 'TOTAL DUE', styles: { fontStyle: 'bold', fillColor: PURPLE, textColor: 255 } },
+         { content: plainMoney(grandTotal), styles: { fontStyle: 'bold', fillColor: PURPLE, textColor: 255, halign: 'right' } }],
+      ],
+      styles: { fontSize: 10, cellPadding: 2.5 },
+      columnStyles: {
+        0: { cellWidth: 60, halign: 'right' },
+        1: { cellWidth: 40, halign: 'right' },
+      },
+      theme: 'plain',
+      margin: { left: W - 14 - 100 },
+    });
+
+    // ── Footer ──
+    let yF = doc.lastAutoTable.finalY + 14;
+    if (yF > 270) yF = 270;
+    doc.setDrawColor(...PURPLE);
+    doc.setLineWidth(0.4);
+    doc.line(14, yF, W - 14, yF);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...GREY);
+    doc.text('Payment terms: Net 30 days from invoice date.', 14, yF + 5);
+    doc.text('Remit payments quoting the PO number above.', 14, yF + 9);
+    doc.text('© HCL Technologies · AI Force · Auto-generated invoice', 14, yF + 13);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, W - 14, yF + 13, { align: 'right' });
+
+    const filename = `Invoice_${po.po_id}.pdf`;
+    doc.save(filename);
+    toast(`Invoice ${po.po_id} downloaded ✓`, 'success');
+  }
+
+  const btnGenReport = document.getElementById('btn-generate-report');
+  if (btnGenReport) {
+    btnGenReport.addEventListener('click', () => {
+      try {
+        downloadDashboardPDF();
+      } catch (e) {
+        toast('Failed to generate PDF: ' + e.message, 'error');
+        console.error(e);
+      }
+    });
+  }
+
+  refreshAll();
+  setInterval(refreshAll, 15000);
+  } // end initSupervisor
+</script>
+</body>
+</html>
